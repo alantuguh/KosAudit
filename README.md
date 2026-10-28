@@ -1,0 +1,7 @@
+Kelompok
+
+ALAN
+FELIX
+BAGUS
+YARDUN
+RICHARD
