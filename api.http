@@ -1,0 +1,215 @@
+@baseUrl = http://127.0.0.1:8000/api
+
+#############################################################
+# AUTENTIKASI
+#############################################################
+
+### Login sebagai Owner
+# @name loginOwner
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "owner@kosaudit.test",
+  "password": "password"
+}
+
+### (variabel) token Owner
+@ownerToken = {{loginOwner.response.body.token}}
+
+### Profil user yang login
+GET {{baseUrl}}/auth/me
+Authorization: Bearer {{ownerToken}}
+
+### Dashboard Owner
+GET {{baseUrl}}/owner/dashboard
+Authorization: Bearer {{ownerToken}}
+
+### Login sebagai Tenant
+# @name loginTenant
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+  "email": "tenant@kosaudit.test",
+  "password": "password"
+}
+
+### (variabel) token Tenant
+@tenantToken = {{loginTenant.response.body.token}}
+
+### Tenant mencoba buka dashboard Owner (harus 403)
+GET {{baseUrl}}/owner/dashboard
+Authorization: Bearer {{tenantToken}}
+
+### Dashboard Tenant
+GET {{baseUrl}}/tenant/dashboard
+Authorization: Bearer {{tenantToken}}
+
+
+#############################################################
+# CRUD KAMAR  (jalankan "Login sebagai Owner" dulu)
+#############################################################
+
+### Daftar kamar (bisa difilter)
+GET {{baseUrl}}/owner/rooms?per_page=10
+Authorization: Bearer {{ownerToken}}
+
+### Filter kamar berdasarkan status
+GET {{baseUrl}}/owner/rooms?status=butuh_perbaikan
+Authorization: Bearer {{ownerToken}}
+
+### Daftar SEMUA master item (untuk memilih item kamar)
+GET {{baseUrl}}/owner/master-items?all=1
+Authorization: Bearer {{ownerToken}}
+
+### Tambah kamar baru beserta item-nya
+# @name createRoom
+POST {{baseUrl}}/owner/rooms
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "room_number": "301",
+  "type": "AC",
+  "monthly_price": 1200000,
+  "description": "Lantai 3, dekat tangga",
+  "items": [
+    { "master_item_id": 1, "quantity": 1 },
+    { "master_item_id": 6, "quantity": 1 },
+    { "master_item_id": 8, "quantity": 2 }
+  ]
+}
+
+### (variabel) id kamar yang baru dibuat
+@roomId = {{createRoom.response.body.data.id}}
+
+### Detail kamar
+GET {{baseUrl}}/owner/rooms/{{roomId}}
+Authorization: Bearer {{ownerToken}}
+
+### Ubah harga & tandai butuh perbaikan (PATCH = sebagian field)
+PATCH {{baseUrl}}/owner/rooms/{{roomId}}
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "monthly_price": 1300000,
+  "status": "butuh_perbaikan"
+}
+
+### Coba set status "terisi" manual (harus 422)
+PATCH {{baseUrl}}/owner/rooms/{{roomId}}
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "status": "terisi"
+}
+
+### Hapus kamar
+DELETE {{baseUrl}}/owner/rooms/{{roomId}}
+Authorization: Bearer {{ownerToken}}
+
+
+#############################################################
+# CRUD MASTER ITEM
+#############################################################
+
+### Daftar item (dengan pencarian)
+GET {{baseUrl}}/owner/master-items?search=lam
+Authorization: Bearer {{ownerToken}}
+
+### Tambah item
+# @name createItem
+POST {{baseUrl}}/owner/master-items
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "name": "Rak Sepatu",
+  "description": "Rak di depan pintu kamar"
+}
+
+### (variabel) id item
+@itemId = {{createItem.response.body.data.id}}
+
+### Detail item
+GET {{baseUrl}}/owner/master-items/{{itemId}}
+Authorization: Bearer {{ownerToken}}
+
+### Ubah item
+PUT {{baseUrl}}/owner/master-items/{{itemId}}
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "name": "Rak Sepatu",
+  "description": "Rak sepatu plastik 3 susun"
+}
+
+### Hapus item
+DELETE {{baseUrl}}/owner/master-items/{{itemId}}
+Authorization: Bearer {{ownerToken}}
+
+
+#############################################################
+# CRUD PENGHUNI
+#############################################################
+
+### Daftar penghuni (dengan pencarian)
+GET {{baseUrl}}/owner/tenants?search=budi
+Authorization: Bearer {{ownerToken}}
+
+### Tambah penghuni
+# @name createTenant
+POST {{baseUrl}}/owner/tenants
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "name": "Rina Wulandari",
+  "email": "rina@kosaudit.test",
+  "phone": "081298765432",
+  "password": "rahasia123",
+  "password_confirmation": "rahasia123"
+}
+
+### (variabel) id penghuni
+@tenantId = {{createTenant.response.body.data.id}}
+
+### Detail penghuni
+GET {{baseUrl}}/owner/tenants/{{tenantId}}
+Authorization: Bearer {{ownerToken}}
+
+### Ubah nomor HP (password tidak berubah)
+PATCH {{baseUrl}}/owner/tenants/{{tenantId}}
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "phone": "081311112222"
+}
+
+### Reset password penghuni (sesi login penghuni ikut dicabut)
+PATCH {{baseUrl}}/owner/tenants/{{tenantId}}
+Authorization: Bearer {{ownerToken}}
+Content-Type: application/json
+
+{
+  "password": "passwordbaru1",
+  "password_confirmation": "passwordbaru1"
+}
+
+### Hapus penghuni
+DELETE {{baseUrl}}/owner/tenants/{{tenantId}}
+Authorization: Bearer {{ownerToken}}
+
+
+#############################################################
+# LOGOUT
+#############################################################
+
+### Logout Owner
+POST {{baseUrl}}/auth/logout
+Authorization: Bearer {{ownerToken}}
