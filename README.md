@@ -3,6 +3,10 @@
 KosAudit is a Laravel demo application for managing boarding-house rooms,
 tenants, inspections, rental contracts, and deposit reviews.
 
+## Our Team
+
+ALAN FELIX BAGUS YARDUN RICHARD
+
 ## Run locally
 
 Requirements: PHP 8.2 or newer and Composer.
