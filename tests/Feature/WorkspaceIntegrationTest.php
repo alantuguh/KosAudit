@@ -20,6 +20,12 @@ class WorkspaceIntegrationTest extends TestCase
 
         $tenant = User::factory()->create(['role' => UserRole::Tenant]);
         $this->actingAs($tenant)->get('/kamar')->assertForbidden();
+
+        $this->actingAs(User::factory()->create(['role' => UserRole::Owner]))
+            ->get('/kamar')
+            ->assertOk()
+            ->assertSee('Data Kamar')
+            ->assertDontSee('Portal Penghuni');
     }
 
     public function test_owner_login_uses_the_backend_credentials_and_role(): void
@@ -47,7 +53,11 @@ class WorkspaceIntegrationTest extends TestCase
 
         $this->get('/portal-penghuni')
             ->assertOk()
-            ->assertSee('Tenant API saat ini menyediakan profil akun saja.');
+            ->assertSee('Tenant API saat ini menyediakan profil akun saja.')
+            ->assertSee('Portal Penghuni')
+            ->assertSee('Dashboard Penghuni')
+            ->assertDontSee('Data Kamar')
+            ->assertDontSee('Perhitungan Deposit');
     }
 
     public function test_owner_room_screen_reads_backend_rooms_and_items(): void
