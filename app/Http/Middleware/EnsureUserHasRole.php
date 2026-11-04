@@ -13,7 +13,7 @@ use Symfony\Component\HttpFoundation\Response;
  *   ->middleware('role:owner')
  *   ->middleware('role:owner,tenant')   // salah satu role cukup
  *
- * Selalu pasang setelah 'auth:sanctum'.
+ * Selalu pasang setelah middleware auth.
  */
 class EnsureUserHasRole
 {
@@ -22,11 +22,17 @@ class EnsureUserHasRole
         $user = $request->user();
 
         if (! $user) {
-            return response()->json(['message' => 'Silakan login terlebih dahulu.'], Response::HTTP_UNAUTHORIZED);
+            return $request->expectsJson()
+                ? response()->json(['message' => 'Silakan login terlebih dahulu.'], Response::HTTP_UNAUTHORIZED)
+                : redirect()->guest(route('login'));
         }
 
         if (! $user->hasRole(...$roles)) {
-            return response()->json(['message' => 'Anda tidak memiliki akses ke fitur ini.'], Response::HTTP_FORBIDDEN);
+            if ($request->expectsJson()) {
+                return response()->json(['message' => 'Anda tidak memiliki akses ke fitur ini.'], Response::HTTP_FORBIDDEN);
+            }
+
+            abort(Response::HTTP_FORBIDDEN);
         }
 
         return $next($request);
