@@ -1,95 +1,109 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
-    <meta charset="utf-8"/>
-    <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
-    <meta name="csrf-token" content="{{ csrf_token() }}"/>
-    <title>Masuk – KosAudit</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
+    <title>Masuk | KosAudit</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
+
+    @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
-<body class="bg-[#f8f9ff] font-['Inter'] text-[#0b1c30] min-h-screen flex items-center justify-center p-4">
-    <div class="w-full max-w-md bg-white rounded-2xl shadow-lg p-8 space-y-6 border border-[#e5eeff]">
-        {{-- Brand Header --}}
-        <div class="flex items-center gap-3">
-            <div class="w-11 h-11 rounded-xl bg-[#0f766e] text-white flex items-center justify-center shadow-sm">
-                <span class="material-symbols-outlined text-[26px]">verified_user</span>
-            </div>
-            <div>
-                <h1 class="text-xl font-bold tracking-tight text-[#0b1c30]">KosAudit</h1>
-                <p class="text-xs font-semibold uppercase tracking-wider text-[#6e7977]">Sistem Dokumentasi Kondisi &amp; Deposit Kos</p>
-            </div>
-        </div>
 
-        <div>
-            <h2 class="text-lg font-bold text-[#0b1c30]">Masuk ke Akun Anda</h2>
-            <p class="text-sm text-[#3e4947] mt-0.5">Silakan masuk sebagai Pemilik Kos (Owner) atau Penghuni.</p>
-        </div>
+<body class="min-h-screen overflow-x-hidden antialiased">
 
-        {{-- Server-side Validation Error Display --}}
-        @if ($errors->any())
-            <div class="p-3.5 rounded-xl bg-[#ffdad6] text-[#ba1a1a] text-xs font-medium space-y-1">
-                @foreach ($errors->all() as $error)
-                    <p>• {{ $error }}</p>
-                @endforeach
-            </div>
-        @endif
+    <!-- Scene: background foto + overlay dari foundation, dipaksa tema dark -->
+    <div
+        class="ui-app-background"
+        data-theme="dark"
+        style="--app-background-image: url('{{ asset('images/bg_sudut.jpg') }}');">
+        <main class="flex min-h-screen items-center justify-center px-5 py-10 lg:justify-between lg:gap-16 lg:px-[9%] xl:px-[11%]">
 
-        {{-- Login Form with CSRF & Role Selector --}}
-        <form method="POST" action="{{ route('login.post') }}" class="space-y-4">
-            @csrf
-            <div>
-                <label for="email" class="block text-xs font-semibold uppercase tracking-wider text-[#3e4947] mb-1.5">Alamat Email</label>
-                <input id="email"
-                       name="email"
-                       type="email"
-                       value="{{ old('email', 'owner@kosaudit.test') }}"
-                       required
-                       class="w-full h-11 px-3.5 rounded-xl bg-[#eff4ff] text-sm text-[#0b1c30] focus:outline-none focus:ring-2 focus:ring-[#0f766e]"
-                       placeholder="nama@email.com"/>
-            </div>
+            <!-- Login -->
+            <section class="w-full max-w-[420px]">
+                <x-glass-card level="premium" class="p-6 sm:p-8">
 
-            <div>
-                <label for="password" class="block text-xs font-semibold uppercase tracking-wider text-[#3e4947] mb-1.5">Kata Sandi</label>
-                <input id="password"
-                       name="password"
-                       type="password"
-                       required
-                       class="w-full h-11 px-3.5 rounded-xl bg-[#eff4ff] text-sm text-[#0b1c30] focus:outline-none focus:ring-2 focus:ring-[#0f766e]"
-                       placeholder="••••••••"/>
-            </div>
+                    <header class="mb-7 space-y-2">
+                        <h1 class="ui-heading-lg">Selamat Datang</h1>
+                        <p class="ui-body-sm">
+                            Masuk ke akun Anda untuk melanjutkan pengelolaan kondisi kamar dan deposit.
+                        </p>
+                    </header>
 
-            <div>
-                <label for="role" class="block text-xs font-semibold uppercase tracking-wider text-[#3e4947] mb-1.5">Masuk Sebagai (Simulasi Role Flowchart)</label>
-                <select id="role"
-                        name="role"
-                        class="w-full h-11 px-3.5 rounded-xl bg-[#eff4ff] text-sm text-[#0b1c30] focus:outline-none focus:ring-2 focus:ring-[#0f766e]">
-                    <option value="owner">Owner / Pengelola Kos (Ke Dashboard Owner)</option>
-                    <option value="tenant">Penghuni Kos (Ke Portal Penghuni)</option>
-                </select>
-            </div>
+                    <x-glass-alert :except="['email', 'password']" />
 
-            <button type="submit"
-                    class="w-full h-11 rounded-xl bg-[#0f766e] hover:bg-[#005c55] text-white font-semibold text-sm shadow-sm transition-all flex items-center justify-center gap-2">
-                <span class="material-symbols-outlined text-[18px]">login</span>
-                <span>Masuk Sekarang</span>
-            </button>
-        </form>
+                    <form method="POST" action="{{ route('login') }}" class="space-y-5">
+                        @csrf
 
-        <p class="rounded-xl bg-[#eff4ff] p-3 text-xs text-[#3e4947]">
-            Akun demo: <strong>owner@kosaudit.test</strong> atau
-            <strong>tenant@kosaudit.test</strong> dengan password <strong>password</strong>.
-        </p>
+                        <x-glass-input
+                            label="Alamat Email"
+                            type="email"
+                            id="email"
+                            name="email"
+                            :value="old('email')"
+                            required
+                            autofocus
+                            autocomplete="username"
+                            icon="mail"
+                            placeholder="nama@email.com" />
 
-        <div class="pt-4 border-t border-[#e5eeff] flex items-center justify-between text-xs text-[#6e7977]">
-            <span>Pintasan Prototipe:</span>
-            <div class="flex gap-2">
-                <a href="{{ route('dashboard') }}" class="text-[#0f766e] font-semibold hover:underline">Dashboard Owner</a>
-                <span>•</span>
-                <a href="{{ route('portal.dashboard') }}" class="text-[#0f766e] font-semibold hover:underline">Portal Penghuni</a>
-            </div>
-        </div>
+                        <x-glass-input
+                            label="Kata Sandi"
+                            type="password"
+                            id="password"
+                            name="password"
+                            required
+                            autocomplete="current-password"
+                            icon="lock"
+                            placeholder="Masukkan kata sandi" />
+
+                        <x-glass-checkbox name="remember" value="1" label="Ingat saya" />
+
+                        <x-glass-button type="submit" variant="secondary">
+                            Masuk ke Akun
+                        </x-glass-button>
+                    </form>
+
+                    <div class="ui-glass-divider mt-6"></div>
+
+                    <p class="ui-caption mt-4 text-center">
+                        &copy; {{ date('Y') }} KosAudit. All rights reserved.
+                    </p>
+
+                </x-glass-card>
+            </section>
+
+            <!-- Right introduction -->
+            <section class="hidden w-full max-w-[510px] lg:block">
+
+                <x-glass-card level="subtle" radius="control" class="mb-7 inline-flex items-center gap-3 px-4 py-3">
+                    <span class="material-symbols-outlined text-brand-300" aria-hidden="true">
+                        apartment
+                    </span>
+                    <span class="ui-eyebrow">Room Condition Management</span>
+                </x-glass-card>
+
+                <h2 class="ui-heading-xl max-w-[500px]">
+                    Transparansi Kondisi Kamar,
+                    <span class="text-brand-300">Keamanan Deposit.</span>
+                </h2>
+
+                <p class="ui-body mt-5 max-w-[430px]">
+                    Dokumentasikan kondisi fisik kamar, pantau perubahan fasilitas, dan kelola deposit secara lebih transparan, cepat, serta adil bagi pemilik maupun penghuni kos.
+                </p>
+
+            </section>
+
+        </main>
     </div>
+
 </body>
+
 </html>

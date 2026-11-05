@@ -4,13 +4,19 @@ use App\Http\Controllers\Web\WorkspaceController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/login', fn () => view('auth.login'))->name('login');
+Route::get('/login', fn() => view('auth.login'))->name('login');
 Route::post('/login', [WorkspaceController::class, 'login'])
     ->middleware('throttle:5,1')
     ->name('login.post');
 Route::post('/logout', [WorkspaceController::class, 'logout'])
     ->middleware('auth')
     ->name('logout');
+
+// UI Playground (khusus environment lokal)
+if (app()->environment('local')) {
+    Route::view('/dev/ui-kit', 'dev.ui-kit')->name('dev.ui-kit');
+    Route::view('/dev/ui-kit/components', 'dev.components')->name('dev.components');
+}
 
 Route::middleware(['auth', 'role:owner'])->group(function () {
     Route::get('/', [WorkspaceController::class, 'dashboard'])->name('dashboard');
@@ -45,19 +51,19 @@ Route::middleware(['auth', 'role:owner'])->group(function () {
             ->with('warning', 'Modul transaksi sewa belum tersedia pada backend yang terhubung; kontrak belum disimpan.');
     })->name('sewa.store');
 
-    Route::get('/inspeksi/form', fn () => view('inspeksi.form'))->name('inspeksi.create');
+    Route::get('/inspeksi/form', fn() => view('inspeksi.form'))->name('inspeksi.create');
     Route::post('/inspeksi/form', function (Request $request) {
         return redirect()->route('inspeksi.create')
             ->with('warning', 'Modul inspeksi belum tersedia pada backend yang terhubung; data belum disimpan.');
     })->name('inspeksi.store');
-    Route::get('/inspeksi/komparasi', fn () => view('inspeksi.komparasi'))->name('inspeksi.komparasi');
+    Route::get('/inspeksi/komparasi', fn() => view('inspeksi.komparasi'))->name('inspeksi.komparasi');
 
-    Route::get('/deposit/perhitungan', fn () => view('deposit.perhitungan'))->name('deposit.perhitungan');
+    Route::get('/deposit/perhitungan', fn() => view('deposit.perhitungan'))->name('deposit.perhitungan');
 });
 
 Route::middleware(['auth', 'role:tenant'])->group(function () {
-    Route::get('/portal-penghuni', fn () => view('portal-penghuni.dashboard'))->name('portal.dashboard');
-    Route::get('/m/beranda', fn () => view('portal-penghuni.mobile-beranda'))->name('mobile.beranda');
-    Route::get('/m/kondisi', fn () => view('portal-penghuni.mobile-kondisi'))->name('mobile.kondisi');
-    Route::get('/m/deposit', fn () => view('portal-penghuni.mobile-deposit'))->name('mobile.deposit');
+    Route::get('/portal-penghuni', fn() => view('portal-penghuni.dashboard'))->name('portal.dashboard');
+    Route::get('/m/beranda', fn() => view('portal-penghuni.mobile-beranda'))->name('mobile.beranda');
+    Route::get('/m/kondisi', fn() => view('portal-penghuni.mobile-kondisi'))->name('mobile.kondisi');
+    Route::get('/m/deposit', fn() => view('portal-penghuni.mobile-deposit'))->name('mobile.deposit');
 });

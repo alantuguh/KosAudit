@@ -1,0 +1,132 @@
+/* =========================================================
+   KOSAUDIT DESIGN SYSTEM
+   FOUNDATION: BACKGROUND SYSTEM
+   ========================================================= */
+
+/* =========================================================
+   1. GLOBAL BACKGROUND
+   ========================================================= */
+
+body {
+    min-height: 100vh;
+
+    background-color: var(--ui-bg);
+
+    transition:
+        background-color var(--duration-normal) var(--ease-standard),
+        color var(--duration-normal) var(--ease-standard);
+}
+
+/* =========================================================
+   2. APP BACKGROUND
+   ========================================================= */
+
+.ui-app-background {
+    position: relative;
+    isolation: isolate;
+
+    min-height: 100vh;
+
+    background-color: var(--ui-bg);
+
+    color: var(--ui-text);
+
+    background-image:
+        radial-gradient(
+            circle at 10% 15%,
+            rgba(154, 203, 169, 0.22),
+            transparent 38%
+        ),
+        radial-gradient(
+            circle at 85% 80%,
+            rgba(102, 169, 130, 0.14),
+            transparent 35%
+        ),
+        var(--ui-background-overlay), var(--app-background-image, none);
+
+    background-position: center;
+    background-size: cover;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+}
+
+/* =========================================================
+   3. AMBIENT LIGHT
+   ========================================================= */
+
+.ui-ambient {
+    position: absolute;
+
+    width: 24rem;
+    height: 24rem;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    filter: blur(90px);
+
+    opacity: 0.28;
+
+    background: var(--ui-brand-300);
+}
+
+.ui-ambient-top {
+    top: -10rem;
+    right: -8rem;
+}
+
+.ui-ambient-bottom {
+    bottom: -12rem;
+    left: -8rem;
+
+    background: var(--ui-brand-500);
+}
+
+/* =========================================================
+   4. CONTENT LAYER
+   ========================================================= */
+
+.ui-background-content {
+    position: relative;
+    z-index: 1;
+}
+
+/* =========================================================
+   5. THEME TRANSITION
+   ========================================================= */
+
+body,
+.ui-app-background,
+.ui-glass {
+    transition:
+        background-color var(--duration-normal) var(--ease-standard),
+        color var(--duration-normal) var(--ease-standard),
+        border-color var(--duration-normal) var(--ease-standard);
+}
+
+/* =========================================================
+   6. MOBILE OPTIMIZATION
+   ========================================================= */
+
+@media (max-width: 768px) {
+    .ui-app-background {
+        background-attachment: scroll;
+    }
+
+    .ui-ambient {
+        width: 15rem;
+        height: 15rem;
+
+        filter: blur(65px);
+        opacity: 0.2;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body,
+    .ui-app-background,
+    .ui-glass {
+        transition: none;
+    }
+}

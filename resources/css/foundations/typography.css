@@ -1,0 +1,94 @@
+/* =========================================================
+   KOSAUDIT DESIGN SYSTEM
+   FOUNDATION: TYPOGRAPHY
+   ========================================================= */
+
+:root {
+    font-family:
+        "Plus Jakarta Sans", "Instrument Sans", ui-sans-serif, system-ui,
+        sans-serif;
+
+    font-synthesis: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Elemen dasar ada di layer base agar utility Tailwind
+   (mis. text-center, text-brand-300) tetap bisa menimpanya. */
+@layer base {
+    body {
+        font-family: var(--font-sans);
+        color: var(--ui-text);
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+        color: var(--ui-text);
+        font-weight: 700;
+        letter-spacing: -0.035em;
+        line-height: 1.25;
+    }
+
+    p {
+        color: var(--ui-text-secondary);
+        line-height: 1.7;
+    }
+
+    small {
+        color: var(--ui-text-muted);
+    }
+}
+
+/* Kelas tipografi KosAudit */
+
+.ui-heading-xl {
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    letter-spacing: -0.045em;
+    line-height: 1.15;
+}
+
+.ui-heading-lg {
+    font-size: clamp(1.5rem, 3vw, 2rem);
+    font-weight: 700;
+}
+
+.ui-heading-md {
+    font-size: 1.25rem;
+    font-weight: 700;
+}
+
+.ui-body {
+    font-size: 0.9375rem;
+    line-height: 1.7;
+}
+
+.ui-body-sm {
+    font-size: 0.8125rem;
+    line-height: 1.6;
+}
+
+.ui-label {
+    color: var(--ui-text);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+}
+
+.ui-eyebrow {
+    color: var(--ui-text-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.ui-caption {
+    color: var(--ui-text-muted);
+    font-size: 0.75rem;
+}

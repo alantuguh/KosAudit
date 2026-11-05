@@ -1,0 +1,534 @@
+/* =========================================================
+   KOSAUDIT DESIGN SYSTEM
+   FOUNDATION: GLASSMORPHISM ENGINE & CONTROLS
+   ========================================================= */
+
+/* =========================================================
+   1. GLASS LEVELS
+   Memetakan token level -> variabel yang dipakai .ui-glass.
+   Premium = default. Subtle menimpa (urutan penting).
+   ========================================================= */
+
+.ui-glass,
+.ui-glass-premium {
+    --glass-background: var(--glass-premium-bg);
+    --glass-border: var(--glass-premium-border);
+    --glass-highlight: var(--glass-premium-highlight);
+    --glass-shadow: var(--glass-premium-shadow);
+    --glass-blur: var(--glass-premium-blur);
+}
+
+.ui-glass-subtle {
+    --glass-background: var(--glass-subtle-bg);
+    --glass-border: var(--glass-subtle-border);
+    --glass-highlight: var(--glass-subtle-highlight);
+    --glass-shadow: var(--glass-subtle-shadow);
+    --glass-blur: var(--glass-subtle-blur);
+}
+
+/* =========================================================
+   2. BASE GLASS
+   ========================================================= */
+
+.ui-glass {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+
+    border: 1px solid var(--glass-border);
+    border-radius: var(--ui-radius-card);
+    background: var(--glass-background);
+
+    backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(140%);
+
+    box-shadow: var(--glass-shadow);
+
+    transition:
+        background var(--duration-normal) var(--ease-standard),
+        border-color var(--duration-normal) var(--ease-standard),
+        box-shadow var(--duration-normal) var(--ease-standard);
+}
+
+/* Untuk elemen kecil (badge, chip) yang memakai radius control */
+.ui-glass-radius-control {
+    border-radius: var(--ui-radius-control);
+}
+
+/* =========================================================
+   3. GLASS HIGHLIGHT
+   ::before = kilau permukaan, ::after = rim tajam di tepi
+   ========================================================= */
+
+.ui-glass::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: inherit;
+
+    background:
+        linear-gradient(135deg, var(--glass-highlight) 0%, transparent 36%),
+        linear-gradient(
+            315deg,
+            color-mix(in srgb, var(--glass-highlight) 35%, transparent) 0%,
+            transparent 26%
+        );
+
+    opacity: 0.5;
+}
+
+.ui-glass::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    padding: 1px;
+    pointer-events: none;
+    border-radius: inherit;
+
+    background: linear-gradient(
+        135deg,
+        var(--glass-highlight) 0%,
+        transparent 32%,
+        transparent 68%,
+        color-mix(in srgb, var(--glass-highlight) 55%, transparent) 100%
+    );
+
+    -webkit-mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask:
+        linear-gradient(#000 0 0) content-box,
+        linear-gradient(#000 0 0);
+    mask-composite: exclude;
+}
+
+/* =========================================================
+   4. GLASS HOVER
+   ========================================================= */
+
+.ui-glass-interactive {
+    cursor: pointer;
+    transition:
+        transform var(--duration-normal) var(--ease-standard),
+        border-color var(--duration-normal) var(--ease-standard),
+        box-shadow var(--duration-normal) var(--ease-standard);
+}
+
+.ui-glass-interactive:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--ui-shadow-lg);
+}
+
+/* =========================================================
+   5. GLASS DIVIDER
+   ========================================================= */
+
+.ui-glass-divider {
+    height: 1px;
+    width: 100%;
+    background: linear-gradient(
+        90deg,
+        transparent,
+        var(--ui-border-strong),
+        transparent
+    );
+}
+
+/* =========================================================
+   6. FORM FIELD & GLASS INPUT
+   ========================================================= */
+
+.ui-field {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.ui-field-error {
+    color: var(--ui-danger);
+    font-size: 0.75rem;
+    line-height: 1.4;
+}
+
+.ui-glass-input-field {
+    position: relative;
+    width: 100%;
+}
+
+.ui-glass-input-field .ui-glass-input-icon {
+    position: absolute;
+    top: 50%;
+    left: 0.875rem;
+    transform: translateY(-50%);
+    font-size: 1.2rem;
+    line-height: 1;
+    color: var(--ui-text-muted);
+    pointer-events: none;
+    transition: color var(--duration-normal) var(--ease-standard);
+}
+
+.ui-glass-input-field:focus-within .ui-glass-input-icon {
+    color: var(--ui-input-focus);
+}
+
+.ui-glass-input {
+    width: 100%;
+    min-height: 2.75rem;
+    padding: 0.75rem 1rem;
+
+    color: var(--ui-text);
+    font-size: 0.875rem;
+    line-height: 1.25rem;
+
+    background: var(--ui-input-bg);
+    border: 1px solid var(--ui-input-border);
+    border-radius: var(--ui-radius-control);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+
+    transition:
+        border-color var(--duration-normal) var(--ease-standard),
+        box-shadow var(--duration-normal) var(--ease-standard),
+        background var(--duration-normal) var(--ease-standard);
+}
+
+.ui-glass-input-has-icon {
+    padding-left: 2.75rem;
+}
+
+.ui-glass-input::placeholder {
+    color: var(--ui-text-muted);
+}
+
+.ui-glass-input:hover:not(:disabled) {
+    border-color: var(--ui-input-border-hover);
+}
+
+.ui-glass-input:focus {
+    outline: none;
+    border-color: var(--ui-input-focus);
+    box-shadow: 0 0 0 3px
+        color-mix(in srgb, var(--ui-input-focus) 22%, transparent);
+}
+
+.ui-glass-input:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ui-glass-input-error,
+.ui-glass-input-error:hover:not(:disabled),
+.ui-glass-input-error:focus {
+    border-color: var(--ui-danger);
+}
+
+.ui-glass-input-error:focus {
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ui-danger) 22%, transparent);
+}
+
+/* Cegah autofill browser menimpa warna input */
+.ui-glass-input:-webkit-autofill {
+    -webkit-text-fill-color: var(--ui-text);
+    transition:
+        background-color 600000s 0s,
+        color 600000s 0s;
+}
+
+/* =========================================================
+   7. GLASS BUTTON
+   ========================================================= */
+
+.ui-btn {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+
+    min-height: 2.75rem;
+    padding: 0.75rem 1.25rem;
+
+    font: inherit;
+    font-size: 0.875rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+    line-height: 1.25rem;
+
+    border: 1px solid transparent;
+    border-radius: var(--ui-radius-control);
+
+    cursor: pointer;
+    user-select: none;
+
+    transition:
+        transform var(--duration-fast) var(--ease-standard),
+        background var(--duration-normal) var(--ease-standard),
+        border-color var(--duration-normal) var(--ease-standard),
+        box-shadow var(--duration-normal) var(--ease-standard),
+        filter var(--duration-normal) var(--ease-standard);
+}
+
+.ui-btn-block {
+    display: flex;
+    width: 100%;
+}
+
+.ui-btn:hover:not(:disabled) {
+    transform: translateY(-1px);
+}
+
+.ui-btn:active:not(:disabled) {
+    transform: scale(0.98);
+}
+
+.ui-btn:focus-visible {
+    outline: 2px solid var(--ui-input-focus);
+    outline-offset: 2px;
+}
+
+.ui-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ui-btn-primary {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.45);
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--ui-brand-400) 80%, transparent),
+        color-mix(in srgb, var(--ui-brand-700) 90%, transparent)
+    );
+    box-shadow:
+        0 8px 22px color-mix(in srgb, var(--ui-brand-900) 35%, transparent),
+        inset 0 1px 0 rgba(255, 255, 255, 0.4);
+}
+
+.ui-btn-primary:hover:not(:disabled) {
+    filter: brightness(1.08);
+}
+
+.ui-btn-secondary {
+    color: var(--ui-text);
+    border-color: color-mix(in srgb, white 38%, transparent);
+    background: color-mix(in srgb, white 14%, transparent);
+    box-shadow:
+        0 6px 18px rgba(0, 0, 0, 0.12),
+        inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.ui-btn-secondary:hover:not(:disabled) {
+    border-color: color-mix(in srgb, white 55%, transparent);
+    background: color-mix(in srgb, white 22%, transparent);
+}
+
+.ui-btn-danger {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.4);
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--ui-danger) 85%, transparent),
+        color-mix(in srgb, var(--ui-danger) 60%, black)
+    );
+    box-shadow:
+        0 8px 22px color-mix(in srgb, var(--ui-danger) 30%, transparent),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.ui-btn-danger:hover:not(:disabled) {
+    filter: brightness(1.08);
+}
+
+.ui-btn-spinner {
+    width: 1rem;
+    height: 1rem;
+    flex-shrink: 0;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    animation: ui-spin 0.7s linear infinite;
+}
+
+@keyframes ui-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* =========================================================
+   8. GLASS CHECKBOX
+   ========================================================= */
+
+.ui-checkbox-field {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.625rem;
+    cursor: pointer;
+}
+
+.ui-checkbox-label {
+    color: var(--ui-text-secondary);
+    font-size: 0.8125rem;
+}
+
+.ui-checkbox {
+    appearance: none;
+    -webkit-appearance: none;
+
+    display: inline-grid;
+    place-content: center;
+    flex-shrink: 0;
+
+    width: 1.125rem;
+    height: 1.125rem;
+    margin: 0;
+
+    cursor: pointer;
+    background: var(--ui-input-bg);
+    border: 1px solid var(--ui-input-border);
+    border-radius: var(--ui-radius-sm);
+
+    transition:
+        background var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-fast) var(--ease-standard);
+}
+
+.ui-checkbox::after {
+    content: "";
+    width: 0.3125rem;
+    height: 0.5625rem;
+    margin-top: -0.0625rem;
+    border: solid #ffffff;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg) scale(0);
+    transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.ui-checkbox:checked {
+    background: var(--ui-brand-500);
+    border-color: var(--ui-brand-300);
+}
+
+.ui-checkbox:checked::after {
+    transform: rotate(45deg) scale(1);
+}
+
+.ui-checkbox:hover:not(:disabled) {
+    border-color: var(--ui-input-border-hover);
+}
+
+.ui-checkbox:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.ui-checkbox:focus-visible {
+    outline: 2px solid var(--ui-input-focus);
+    outline-offset: 2px;
+}
+
+/* =========================================================
+   9. GLASS ALERT
+   ========================================================= */
+
+.ui-alert {
+    --alert-color: var(--ui-info);
+
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+
+    margin-bottom: var(--space-4);
+    padding: 0.75rem 0.875rem;
+
+    color: var(--ui-text);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+
+    background: color-mix(in srgb, var(--alert-color) 16%, transparent);
+    border: 1px solid color-mix(in srgb, var(--alert-color) 45%, transparent);
+    border-radius: var(--ui-radius-control);
+}
+
+.ui-alert-success {
+    --alert-color: var(--ui-success);
+}
+
+.ui-alert-warning {
+    --alert-color: var(--ui-warning);
+}
+
+.ui-alert-danger {
+    --alert-color: var(--ui-danger);
+}
+
+.ui-alert .ui-alert-icon {
+    flex-shrink: 0;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--alert-color);
+}
+
+.ui-alert-body {
+    flex: 1;
+    min-width: 0;
+}
+
+.ui-alert-body p {
+    color: inherit;
+    line-height: 1.5;
+}
+
+.ui-alert-title {
+    margin-bottom: 0.25rem;
+    font-weight: 600;
+}
+
+.ui-alert-close {
+    display: inline-grid;
+    place-items: center;
+    padding: 0;
+    color: var(--ui-text-muted);
+    cursor: pointer;
+    background: transparent;
+    border: 0;
+    border-radius: var(--ui-radius-sm);
+}
+
+.ui-alert-close:hover {
+    color: var(--ui-text);
+}
+
+.ui-alert-close .material-symbols-outlined {
+    font-size: 1.125rem;
+}
+
+/* =========================================================
+   10. ACCESSIBILITY & PERFORMANCE
+   ========================================================= */
+
+@supports not (
+    (backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))
+) {
+    .ui-glass {
+        background: var(--ui-surface);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ui-glass,
+    .ui-glass-interactive,
+    .ui-glass-input,
+    .ui-btn,
+    .ui-checkbox {
+        transition: none;
+    }
+
+    .ui-glass-interactive:hover,
+    .ui-btn:hover:not(:disabled),
+    .ui-btn:active:not(:disabled) {
+        transform: none;
+    }
+}
