@@ -23,6 +23,7 @@
 @import "./foundations/typography.css";
 @import "./foundations/effects.css";
 @import "./foundations/backgrounds.css";
+@import "./foundations/layout.css";
 
 /* =========================================================
    4. TAILWIND SOURCE DETECTION

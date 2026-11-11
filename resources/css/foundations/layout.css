@@ -1,0 +1,724 @@
+/* =========================================================
+   KOSAUDIT DESIGN SYSTEM
+   FOUNDATION: APP SHELL & DATA COMPONENTS
+   ========================================================= */
+
+:root {
+    --ui-sidebar-width: 17rem;
+    --ui-header-height: 4rem;
+}
+
+/* =========================================================
+   1. TONES (dipakai badge, avatar, icon tile)
+   ========================================================= */
+
+.ui-tone-brand {
+    --tone: var(--ui-brand-400);
+}
+
+.ui-tone-success {
+    --tone: var(--ui-success);
+}
+
+.ui-tone-warning {
+    --tone: var(--ui-warning);
+}
+
+.ui-tone-danger {
+    --tone: var(--ui-danger);
+}
+
+.ui-tone-info {
+    --tone: var(--ui-info);
+}
+
+.ui-tone-neutral {
+    --tone: var(--ui-text-secondary);
+}
+
+/* =========================================================
+   2. SHELL
+   ========================================================= */
+
+.ui-shell-main {
+    min-height: 100vh;
+}
+
+.ui-shell-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-6);
+
+    max-width: 90rem;
+    margin-inline: auto;
+    padding: var(--space-6) var(--space-4) var(--space-12);
+}
+
+@media (min-width: 1024px) {
+    .ui-shell-main {
+        padding-left: var(--ui-sidebar-width);
+    }
+
+    .ui-shell-content {
+        padding-inline: var(--space-8);
+    }
+}
+
+/* =========================================================
+   3. SIDEBAR
+   ========================================================= */
+
+.ui-sidebar {
+    position: fixed;
+    inset: 0 auto 0 0;
+    z-index: 50;
+
+    display: flex;
+    flex-direction: column;
+
+    width: var(--ui-sidebar-width);
+    border-width: 0 1px 0 0;
+    border-radius: 0;
+
+    transform: translateX(-100%);
+    transition: transform var(--duration-normal) var(--ease-standard);
+}
+
+html[data-sidebar-open] .ui-sidebar {
+    transform: translateX(0);
+}
+
+.ui-sidebar-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+
+    background: var(--ui-overlay);
+    opacity: 0;
+    pointer-events: none;
+
+    transition: opacity var(--duration-normal) var(--ease-standard);
+}
+
+html[data-sidebar-open] .ui-sidebar-backdrop {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+@media (min-width: 1024px) {
+    .ui-sidebar {
+        transform: none;
+    }
+
+    .ui-sidebar-backdrop {
+        display: none;
+    }
+}
+
+.ui-sidebar-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    min-height: var(--ui-header-height);
+    padding: 0 1.25rem;
+}
+
+.ui-sidebar-title {
+    color: var(--ui-text);
+    font-size: 1.125rem;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+}
+
+.ui-sidebar-property {
+    padding: 0.5rem 0.75rem;
+}
+
+.ui-property {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.625rem 0.75rem;
+}
+
+.ui-property > .material-symbols-outlined:first-child {
+    color: var(--ui-brand-400);
+}
+
+.ui-property > .material-symbols-outlined:last-child {
+    margin-left: auto;
+    color: var(--ui-text-muted);
+}
+
+.ui-sidebar-nav {
+    flex: 1;
+    min-height: 0;
+    padding: 0.25rem 0.75rem;
+    overflow-y: auto;
+}
+
+.ui-sidebar-footer {
+    padding: 0.75rem;
+}
+
+/* =========================================================
+   4. NAVIGATION ITEM
+   ========================================================= */
+
+.ui-nav-section {
+    padding: var(--space-4) 0.75rem var(--space-2);
+}
+
+.ui-nav-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+
+    min-height: 2.5rem;
+    margin-bottom: 0.25rem;
+    padding: 0.5rem 0.75rem;
+
+    color: var(--ui-text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+
+    border-radius: var(--ui-radius-control);
+
+    transition:
+        background var(--duration-normal) var(--ease-standard),
+        color var(--duration-normal) var(--ease-standard);
+}
+
+.ui-nav-item .material-symbols-outlined {
+    font-size: 1.25rem;
+    line-height: 1;
+}
+
+.ui-nav-item:hover {
+    color: var(--ui-text);
+    background: color-mix(in srgb, var(--ui-text) 8%, transparent);
+}
+
+.ui-nav-item[aria-current="page"] {
+    color: #ffffff;
+    font-weight: 600;
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--ui-brand-400) 80%, transparent),
+        color-mix(in srgb, var(--ui-brand-700) 90%, transparent)
+    );
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+
+.ui-nav-item:focus-visible {
+    outline: 2px solid var(--ui-input-focus);
+    outline-offset: 2px;
+}
+
+/* =========================================================
+   5. HEADER
+   ========================================================= */
+
+.ui-header {
+    position: sticky;
+    top: 0;
+    z-index: 30;
+
+    border-width: 0 0 1px 0;
+    border-radius: 0;
+}
+
+.ui-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+
+    min-height: var(--ui-header-height);
+    padding: 0.5rem var(--space-4);
+}
+
+@media (min-width: 1024px) {
+    .ui-header-inner {
+        padding-inline: var(--space-8);
+    }
+
+    .ui-menu-btn {
+        display: none;
+    }
+}
+
+.ui-header-search {
+    flex: 1;
+    max-width: 36rem;
+}
+
+.ui-user-name {
+    color: var(--ui-text);
+    font-size: 0.875rem;
+    font-weight: 600;
+    line-height: 1.2;
+}
+
+/* =========================================================
+   6. ICON BUTTON & ICON TILE
+   ========================================================= */
+
+.ui-icon-btn {
+    position: relative;
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+
+    width: 2.5rem;
+    height: 2.5rem;
+    padding: 0;
+
+    color: var(--ui-text-secondary);
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--ui-radius-control);
+
+    cursor: pointer;
+
+    transition:
+        background var(--duration-normal) var(--ease-standard),
+        color var(--duration-normal) var(--ease-standard);
+}
+
+.ui-icon-btn .material-symbols-outlined {
+    font-size: 1.375rem;
+    line-height: 1;
+}
+
+.ui-icon-btn:hover {
+    color: var(--ui-text);
+    background: color-mix(in srgb, var(--ui-text) 8%, transparent);
+}
+
+.ui-icon-btn:focus-visible {
+    outline: 2px solid var(--ui-input-focus);
+    outline-offset: 2px;
+}
+
+.ui-icon-btn-dot {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+
+    width: 0.5rem;
+    height: 0.5rem;
+
+    background: var(--ui-danger);
+    border-radius: 50%;
+}
+
+.ui-theme-toggle .ui-theme-icon-light {
+    display: none;
+}
+
+[data-theme="dark"] .ui-theme-toggle .ui-theme-icon-light {
+    display: inline;
+}
+
+[data-theme="dark"] .ui-theme-toggle .ui-theme-icon-dark {
+    display: none;
+}
+
+.ui-icon-tile {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+
+    width: 2.5rem;
+    height: 2.5rem;
+
+    color: color-mix(
+        in srgb,
+        var(--tone, var(--ui-brand-400)) 75%,
+        var(--ui-text)
+    );
+    background: color-mix(
+        in srgb,
+        var(--tone, var(--ui-brand-400)) 18%,
+        transparent
+    );
+    border: 1px solid
+        color-mix(in srgb, var(--tone, var(--ui-brand-400)) 35%, transparent);
+    border-radius: var(--ui-radius-control);
+}
+
+.ui-icon-tile .material-symbols-outlined {
+    font-size: 1.375rem;
+    line-height: 1;
+}
+
+/* =========================================================
+   7. BUTTON (tambahan: ukuran kecil, tautan, ikon)
+   ========================================================= */
+
+.ui-btn {
+    text-decoration: none;
+}
+
+.ui-btn .material-symbols-outlined {
+    font-size: 1.125rem;
+    line-height: 1;
+}
+
+.ui-btn-sm {
+    min-height: calc(var(--ui-control-height) - 0.75rem);
+    padding: 0.375rem 0.875rem;
+    font-size: calc(var(--ui-btn-font-size) - 0.125rem);
+}
+
+/* =========================================================
+   8. BADGE & AVATAR
+   ========================================================= */
+
+.ui-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+
+    min-height: 1.5rem;
+    padding: 0.125rem 0.625rem;
+
+    color: color-mix(
+        in srgb,
+        var(--tone, var(--ui-text-secondary)) 75%,
+        var(--ui-text)
+    );
+    font-size: 0.75rem;
+    font-weight: 600;
+    line-height: 1rem;
+    white-space: nowrap;
+
+    background: color-mix(
+        in srgb,
+        var(--tone, var(--ui-text-secondary)) 16%,
+        transparent
+    );
+    border: 1px solid
+        color-mix(
+            in srgb,
+            var(--tone, var(--ui-text-secondary)) 35%,
+            transparent
+        );
+    border-radius: var(--ui-radius-sm);
+}
+
+.ui-badge .material-symbols-outlined {
+    font-size: 0.875rem;
+    line-height: 1;
+}
+
+.ui-badge-dot {
+    width: 0.375rem;
+    height: 0.375rem;
+    background: currentColor;
+    border-radius: 50%;
+}
+
+.ui-avatar {
+    display: inline-grid;
+    place-items: center;
+    flex-shrink: 0;
+
+    width: 2.25rem;
+    height: 2.25rem;
+
+    color: color-mix(
+        in srgb,
+        var(--tone, var(--ui-brand-400)) 75%,
+        var(--ui-text)
+    );
+    font-size: 0.75rem;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+
+    background: color-mix(
+        in srgb,
+        var(--tone, var(--ui-brand-400)) 20%,
+        transparent
+    );
+    border: 1px solid
+        color-mix(in srgb, var(--tone, var(--ui-brand-400)) 35%, transparent);
+    border-radius: var(--ui-radius-control);
+}
+
+/* =========================================================
+   9. STAT CARD, INSET, LINK
+   ========================================================= */
+
+.ui-stat {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-5) var(--space-6);
+}
+
+.ui-stat-value {
+    color: var(--ui-text);
+    font-size: 2rem;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    line-height: 1.2;
+    font-variant-numeric: tabular-nums;
+}
+
+.ui-stat-unit {
+    margin-left: 0.25rem;
+    color: var(--ui-text-secondary);
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: 0;
+}
+
+.ui-inset {
+    padding: var(--space-4);
+    background: color-mix(in srgb, var(--ui-text) 5%, transparent);
+    border: 1px solid var(--ui-border);
+    border-radius: var(--ui-radius-control);
+}
+
+.ui-quote {
+    margin: 0;
+    color: var(--ui-text-secondary);
+    font-size: 0.8125rem;
+    font-style: italic;
+    line-height: 1.6;
+}
+
+.ui-link {
+    color: var(--ui-text);
+    font-weight: 600;
+    text-decoration: none;
+}
+
+.ui-link:hover {
+    color: var(--ui-brand-400);
+    text-decoration: underline;
+}
+
+/* =========================================================
+   10. SELECT
+   ========================================================= */
+
+.ui-select-wrap {
+    position: relative;
+    display: block;
+}
+
+.ui-select {
+    padding-right: 2.5rem;
+    cursor: pointer;
+    appearance: none;
+    -webkit-appearance: none;
+}
+
+.ui-select option {
+    color: var(--ui-text);
+    background: var(--ui-surface);
+}
+
+.ui-select-icon {
+    position: absolute;
+    top: 50%;
+    right: 0.75rem;
+    transform: translateY(-50%);
+
+    color: var(--ui-text-muted);
+    font-size: 1.25rem;
+    line-height: 1;
+    pointer-events: none;
+}
+
+.ui-select-sm {
+    min-height: 2rem;
+    padding-top: 0.25rem;
+    padding-bottom: 0.25rem;
+    font-size: 0.75rem;
+}
+
+/* =========================================================
+   11. CHIP (filter)
+   ========================================================= */
+
+.ui-chip {
+    min-height: 2rem;
+    padding: 0.25rem 0.75rem;
+
+    color: var(--ui-text-secondary);
+    font: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+
+    cursor: pointer;
+    background: transparent;
+    border: 1px solid var(--ui-input-border);
+    border-radius: var(--ui-radius-control);
+
+    transition:
+        background var(--duration-normal) var(--ease-standard),
+        border-color var(--duration-normal) var(--ease-standard),
+        color var(--duration-normal) var(--ease-standard);
+}
+
+.ui-chip:hover {
+    color: var(--ui-text);
+    border-color: var(--ui-input-border-hover);
+}
+
+.ui-chip[aria-pressed="true"] {
+    color: #ffffff;
+    border-color: rgba(255, 255, 255, 0.45);
+    background: linear-gradient(
+        135deg,
+        color-mix(in srgb, var(--ui-brand-400) 80%, transparent),
+        color-mix(in srgb, var(--ui-brand-700) 90%, transparent)
+    );
+}
+
+.ui-chip:focus-visible {
+    outline: 2px solid var(--ui-input-focus);
+    outline-offset: 2px;
+}
+
+/* =========================================================
+   12. TABLE
+   ========================================================= */
+
+.ui-table-card {
+    padding: 0;
+}
+
+.ui-table-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    padding: var(--space-5) var(--space-6);
+}
+
+.ui-table-controls {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+}
+
+.ui-table-search {
+    width: 15rem;
+    max-width: 100%;
+}
+
+.ui-filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.375rem;
+}
+
+.ui-table-scroll {
+    overflow-x: auto;
+    border-block: 1px solid var(--ui-border);
+}
+
+.ui-table {
+    width: 100%;
+    color: var(--ui-text);
+    font-size: 0.8125rem;
+    text-align: left;
+    border-collapse: collapse;
+}
+
+.ui-table thead th {
+    padding: 0.75rem var(--space-4);
+
+    color: var(--ui-text-muted);
+    font-size: 0.6875rem;
+    font-weight: 700;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    white-space: nowrap;
+
+    background: color-mix(in srgb, var(--ui-text) 5%, transparent);
+}
+
+.ui-table td {
+    padding: 0.875rem var(--space-4);
+    vertical-align: middle;
+    border-top: 1px solid var(--ui-border);
+}
+
+.ui-table tbody tr:first-child td {
+    border-top: 0;
+}
+
+.ui-table th:first-child,
+.ui-table td:first-child {
+    padding-left: var(--space-6);
+}
+
+.ui-table th:last-child,
+.ui-table td:last-child {
+    padding-right: var(--space-6);
+}
+
+.ui-table .ui-cell-end {
+    text-align: right;
+    white-space: nowrap;
+}
+
+.ui-table tbody tr {
+    transition: background var(--duration-fast) var(--ease-standard);
+}
+
+.ui-table tbody tr:hover {
+    background: color-mix(in srgb, var(--ui-text) 6%, transparent);
+}
+
+.ui-table tbody tr[data-tone="danger"] {
+    background: color-mix(in srgb, var(--ui-danger) 10%, transparent);
+}
+
+.ui-table-empty td {
+    padding: var(--space-8) var(--space-4);
+    color: var(--ui-text-muted);
+    text-align: center;
+}
+
+.ui-table-footer {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-6);
+}
+
+.ui-table-perpage {
+    width: 5rem;
+}
+
+.ui-pager {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+}
+
+.ui-pager .ui-btn {
+    min-width: 2rem;
+    padding-inline: 0.5rem;
+}
+
+.ui-pager-gap {
+    padding-inline: 0.25rem;
+    color: var(--ui-text-muted);
+}
