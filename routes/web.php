@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Web\WorkspaceController;
+use App\Http\Controllers\Dev\ThemeTokenController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -16,7 +17,9 @@ Route::post('/logout', [WorkspaceController::class, 'logout'])
 if (app()->environment('local')) {
     Route::view('/dev/ui-kit', 'dev.ui-kit')->name('dev.ui-kit');
     Route::view('/dev/ui-kit/components', 'dev.components')->name('dev.components');
+    Route::post('/dev/ui-kit/apply', [ThemeTokenController::class, 'apply'])->name('dev.apply');
 }
+
 
 Route::middleware(['auth', 'role:owner'])->group(function () {
     Route::get('/', [WorkspaceController::class, 'dashboard'])->name('dashboard');

@@ -24,23 +24,25 @@ class WorkspaceController extends Controller
         $validated = $request->validate([
             'email' => ['required', 'email'],
             'password' => ['required', 'string'],
-            'role' => ['required', 'in:owner,tenant'],
         ]);
 
         if (! Auth::attempt([
             'email' => $validated['email'],
             'password' => $validated['password'],
-            'role' => $validated['role'],
-        ])) {
+        ], $request->boolean('remember'))) {
             throw ValidationException::withMessages([
-                'email' => 'Email, password, atau jenis akun tidak sesuai.',
+                'email' => 'Email atau password tidak sesuai.',
             ]);
         }
 
         $request->session()->regenerate();
 
+        // Role dibaca dari akun di database, bukan dari input browser.
+        $role = Auth::user()->role;
+        $role = $role instanceof \BackedEnum ? $role->value : $role;
+
         return redirect()->intended(
-            $validated['role'] === 'tenant'
+            $role === 'tenant'
                 ? route('portal.dashboard')
                 : route('dashboard')
         );
@@ -79,13 +81,13 @@ class WorkspaceController extends Controller
             ->with('masterItems')
             ->orderBy('room_number')
             ->get()
-            ->map(fn (Room $room) => [
+            ->map(fn(Room $room) => [
                 $room->room_number,
                 (int) substr($room->room_number, 0, 1),
                 $room->description ?: 'Kamar Kos',
                 $this->roomTypeLabel($room->type),
                 'Kapasitas standar',
-                'Rp '.number_format($room->monthly_price, 0, ',', '.'),
+                'Rp ' . number_format($room->monthly_price, 0, ',', '.'),
                 $room->masterItems->pluck('name')->implode(', ') ?: 'Belum ada item terdaftar',
                 '- (Belum Ada)',
                 'Belum ada kontrak sewa',
@@ -112,7 +114,7 @@ class WorkspaceController extends Controller
         app(ApiRoomController::class)->store($request);
 
         return redirect()->route('kamar.index')
-            ->with('success', 'Data kamar '.$request->validated('room_number').' berhasil ditambahkan.');
+            ->with('success', 'Data kamar ' . $request->validated('room_number') . ' berhasil ditambahkan.');
     }
 
     public function room(string $number): View
@@ -127,7 +129,7 @@ class WorkspaceController extends Controller
             'lantai' => substr($room->room_number, 0, 1),
             'tipe' => $this->roomTypeLabel($room->type),
             'ukuran' => 'Ukuran belum dicatat',
-            'harga' => 'Rp '.number_format($room->monthly_price, 0, ',', '.'),
+            'harga' => 'Rp ' . number_format($room->monthly_price, 0, ',', '.'),
             'status' => match ($room->status) {
                 RoomStatus::Available => 'Kosong (Siap Huni)',
                 RoomStatus::Occupied => 'Terisi',
@@ -148,7 +150,7 @@ class WorkspaceController extends Controller
         $penghuniList = User::tenants()
             ->orderBy('name')
             ->get()
-            ->map(fn (User $tenant) => [
+            ->map(fn(User $tenant) => [
                 'id' => $tenant->id,
                 'nama' => $tenant->name,
                 'email' => $tenant->email,
@@ -166,7 +168,7 @@ class WorkspaceController extends Controller
         app(AuthController::class)->register($request);
 
         return redirect()->route('penghuni.index')
-            ->with('success', 'Akun penghuni '.$request->validated('name').' berhasil dibuat.');
+            ->with('success', 'Akun penghuni ' . $request->validated('name') . ' berhasil dibuat.');
     }
 
     private function roomTypeLabel(string $type): string
