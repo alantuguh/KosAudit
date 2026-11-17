@@ -1,113 +1,180 @@
-@extends('layouts.app')
+@extends('layouts.glass')
 
-@section('title', 'Data Penghuni Kos')
+@section('title', 'Data Penghuni')
 
 @section('content')
-<div class="flex flex-col w-full space-y-space-xl">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
-        <div>
-            <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Data Penghuni Kos</h1>
-            <p class="font-body-sm text-body-sm text-outline mt-0.5">Kelola data identitas penghuni, kontak WhatsApp, dan rekening pengembalian deposit.</p>
-        </div>
-        <button type="button" onclick="document.getElementById('modal-tambah-penghuni').classList.remove('hidden')"
-                class="inline-flex items-center gap-2 px-space-md h-10 rounded-lg bg-primary-container text-on-primary hover:bg-primary shadow-sm font-label-lg">
-            <span class="material-symbols-outlined text-[20px]">person_add</span>
-            <span>Tambah Penghuni</span>
-        </button>
-    </div>
+@php
+// Nomor lokal (08xx) -> format internasional untuk tautan WhatsApp.
+$waLink = function (?string $phone) {
+    if (! $phone || ! preg_match('/^(\+62|62|0)8[0-9]{7,12}$/', $phone)) {
+        return null;
+    }
 
-    <div class="bg-surface-container-lowest rounded-xl shadow-sm overflow-hidden">
-        <div class="p-space-md bg-surface-container-lowest flex flex-col sm:flex-row items-center justify-between gap-space-sm">
-            <div class="relative w-full sm:w-80">
-                <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[20px]">search</span>
-                <input id="search-penghuni" type="text" placeholder="Cari nama, NIK, nomor HP, atau kamar..."
-                       class="w-full h-10 pl-10 pr-space-md rounded-lg bg-surface-container-low text-body-md focus:outline-none focus:ring-1 focus:ring-primary"/>
-            </div>
-        </div>
+    return 'https://wa.me/' . preg_replace('/^(\+62|0)/', '62', $phone);
+};
 
-        <div class="overflow-x-auto">
-            <table id="penghuni-table" class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="bg-surface-container-low text-outline font-label-sm uppercase tracking-wider">
-                        <th class="py-3.5 px-space-lg">Nama Penghuni</th>
-                        <th class="py-3.5 px-space-md">Kamar</th>
-                        <th class="py-3.5 px-space-md">No. WhatsApp</th>
-                        <th class="py-3.5 px-space-md">Informasi Akun</th>
-                        <th class="py-3.5 px-space-md">Status Akun</th>
-                        <th class="py-3.5 px-space-lg text-right">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-surface-container-low text-body-md">
-                    @foreach ($penghuniList as $p)
-                    <tr class="hover:bg-surface-container-low/50 transition-colors">
-                        <td class="py-4 px-space-lg font-semibold text-on-surface">
-                            {{ $p['nama'] }}
-                            <span class="block text-xs font-normal text-outline">{{ $p['email'] }}</span>
-                        </td>
-                        <td class="py-4 px-space-md font-mono-numeric">
-                            @if ($p['kamar'])
-                                <a href="{{ route('kamar.show', $p['kamar']) }}" class="text-primary font-semibold hover:underline">Kamar {{ $p['kamar'] }}</a>
-                            @else
-                                            <span class="text-outline">Belum ditetapkan</span>
-                            @endif
-                        </td>
-                        <td class="py-4 px-space-md font-mono-numeric text-outline">{{ $p['telepon'] }}</td>
-                        <td class="py-4 px-space-md text-on-surface-variant">{{ $p['rekening'] }}</td>
-                        <td class="py-4 px-space-md"><x-badge :status="$p['status']" /></td>
-                        <td class="py-4 px-space-lg text-right text-outline text-xs">Akun #{{ $p['id'] }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table>
-        </div>
-        <div id="pagination-penghuni" class="py-3.5 px-space-lg bg-surface-container-lowest"></div>
-    </div>
-</div>
+$reopenModal = $errors->hasAny(['name', 'email', 'phone', 'password']);
+@endphp
 
-<x-modal id="modal-tambah-penghuni" title="Registrasi Penghuni Baru">
-    <form method="POST" action="{{ route('penghuni.store') }}" class="space-y-space-md">
+<x-glass-page-header
+    eyebrow="Manajemen Penghuni"
+    title="Data Penghuni"
+    description="Kelola akun penghuni, kontak WhatsApp, dan rekening pengembalian deposit.">
+    <x-slot:actions>
+        <x-glass-button type="button" variant="primary" :block="false" data-modal-open="modal-tambah-penghuni">
+            <span class="material-symbols-outlined" aria-hidden="true">person_add</span>
+            Tambah Penghuni
+        </x-glass-button>
+    </x-slot:actions>
+</x-glass-page-header>
+
+@if ($penghuniList->isEmpty())
+<x-glass-empty-state icon="group" title="Belum ada penghuni terdaftar">
+    Buat akun penghuni agar mereka dapat meninjau hasil inspeksi dan menyetujui pengembalian deposit dari portal penghuni.
+
+    <x-slot:actions>
+        <x-glass-button type="button" variant="primary" :block="false" data-modal-open="modal-tambah-penghuni">
+            <span class="material-symbols-outlined" aria-hidden="true">person_add</span>
+            Tambah Penghuni Pertama
+        </x-glass-button>
+    </x-slot:actions>
+</x-glass-empty-state>
+@else
+<x-glass-table
+    id="penghuni-table"
+    :stack="true"
+    :per-page="10"
+    :per-page-options="[10, 25, 50]"
+    search-placeholder="Cari nama, email, atau nomor HP..."
+    info-label="penghuni">
+    <x-slot:head>
+        <tr>
+            <th scope="col">Penghuni</th>
+            <th scope="col">Kamar</th>
+            <th scope="col">WhatsApp</th>
+            <th scope="col">Rekening</th>
+            <th scope="col">Status</th>
+            <th scope="col">Akun</th>
+        </tr>
+    </x-slot:head>
+
+    @foreach ($penghuniList as $p)
+    @php $wa = $waLink($p['telepon']); @endphp
+    <tr>
+        <td>
+            <p class="font-semibold leading-tight">{{ $p['nama'] }}</p>
+            <p class="ui-caption">{{ $p['email'] }}</p>
+        </td>
+
+        <td data-label="Kamar">
+            @if ($p['kamar'])
+            <a href="{{ route('kamar.show', $p['kamar']) }}" class="ui-link">Kamar {{ $p['kamar'] }}</a>
+            @else
+            <span class="ui-text-muted">Belum ditetapkan</span>
+            @endif
+        </td>
+
+        <td data-label="WhatsApp" class="ui-num">
+            @if ($wa)
+            <a href="{{ $wa }}" target="_blank" rel="noopener noreferrer" class="ui-link">
+                {{ $p['telepon'] }}<span class="sr-only"> (buka WhatsApp di tab baru)</span>
+            </a>
+            @else
+            <span class="ui-text-muted">{{ $p['telepon'] }}</span>
+            @endif
+        </td>
+
+        <td data-label="Rekening">
+            <span @class(['ui-text-muted' => $p['rekening'] === 'Belum dicatat'])>{{ $p['rekening'] }}</span>
+        </td>
+
+        <td data-label="Status"><x-glass-badge :status="$p['status']" /></td>
+
+        <td data-label="Akun" class="ui-caption ui-num">#{{ $p['id'] }}</td>
+    </tr>
+    @endforeach
+</x-glass-table>
+@endif
+
+{{-- Modal: tambah penghuni --}}
+<x-glass-modal
+    id="modal-tambah-penghuni"
+    title="Tambah Penghuni"
+    description="Akun ini dipakai penghuni untuk masuk ke portal penghuni."
+    :open="$reopenModal">
+    <form method="POST" action="{{ route('penghuni.store') }}" class="ui-modal-form" data-submit-once>
         @csrf
-        <div>
-            <label class="block font-label-md text-on-surface mb-1">Nama Lengkap *</label>
-            <input type="text" name="name" required placeholder="Contoh: Nabila Salma" class="w-full h-10 px-3 rounded-lg bg-surface-container-low"/>
+
+        <x-glass-input
+            label="Nama Lengkap"
+            id="name"
+            name="name"
+            :value="old('name')"
+            required
+            maxlength="255"
+            autocomplete="off"
+            placeholder="Contoh: Nabila Salma" />
+
+        <div class="ui-form-grid">
+            <x-glass-input
+                label="Email Akun"
+                id="email"
+                name="email"
+                type="email"
+                :value="old('email')"
+                required
+                maxlength="255"
+                autocomplete="off"
+                placeholder="nama@email.com" />
+
+            <div class="ui-field">
+                <x-glass-input
+                    label="Nomor WhatsApp"
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    :value="old('phone')"
+                    required
+                    inputmode="tel"
+                    pattern="(\+62|62|0)8[0-9]{7,12}"
+                    title="Nomor HP Indonesia, contoh 081234567890"
+                    placeholder="081234567890" />
+                <p class="ui-hint">Diawali 08, 628, atau +628.</p>
+            </div>
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
-            <div>
-                <label class="block font-label-md text-on-surface mb-1">Email akun *</label>
-                <input type="email" name="email" required placeholder="nama@email.com" class="w-full h-10 px-3 rounded-lg bg-surface-container-low"/>
+
+        <div class="ui-form-grid">
+            <div class="ui-field">
+                <x-glass-input
+                    label="Password Awal"
+                    id="password"
+                    name="password"
+                    type="password"
+                    required
+                    minlength="8"
+                    autocomplete="new-password"
+                    />
+                <p class="ui-hint">Minimal 8 karakter. Sampaikan ke penghuni secara langsung.</p>
             </div>
-            <div>
-                <label class="block font-label-md text-on-surface mb-1">Nomor WhatsApp *</label>
-                <input type="tel" name="phone" required placeholder="081234567890" pattern="(\+62|62|0)8[0-9]{7,12}" class="w-full h-10 px-3 rounded-lg bg-surface-container-low"/>
-            </div>
+
+            <x-glass-input
+                label="Konfirmasi Password"
+                id="password_confirmation"
+                name="password_confirmation"
+                type="password"
+                required
+                minlength="8"
+                autocomplete="new-password"
+                />
         </div>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
-            <div>
-                <label class="block font-label-md text-on-surface mb-1">Password awal *</label>
-                <input type="password" name="password" required minlength="8" autocomplete="new-password" class="w-full h-10 px-3 rounded-lg bg-surface-container-low"/>
-            </div>
-            <div>
-                <label class="block font-label-md text-on-surface mb-1">Konfirmasi password *</label>
-                <input type="password" name="password_confirmation" required minlength="8" autocomplete="new-password" class="w-full h-10 px-3 rounded-lg bg-surface-container-low"/>
-            </div>
-        </div>
-        <div class="flex justify-end gap-2 pt-2">
-            <button type="button" onclick="document.getElementById('modal-tambah-penghuni').classList.add('hidden')" class="px-4 py-2 rounded-lg bg-surface-container">Batal</button>
-            <button type="submit" class="px-4 py-2 rounded-lg bg-primary-container text-on-primary font-semibold">Simpan Penghuni</button>
+
+        <div class="ui-modal-footer">
+            <x-glass-button type="button" variant="secondary" :block="false" data-modal-close>Batal</x-glass-button>
+            <x-glass-button type="submit" variant="primary" :block="false">
+                <span class="material-symbols-outlined" aria-hidden="true">save</span>
+                Simpan Penghuni
+            </x-glass-button>
         </div>
     </form>
-</x-modal>
+</x-glass-modal>
 @endsection
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    new TablePlus('#penghuni-table', {
-        perPage: 5,
-        perPageOptions: [5, 10, 20],
-        searchInput: '#search-penghuni',
-        paginationContainer: '#pagination-penghuni'
-    });
-});
-</script>
-@endpush

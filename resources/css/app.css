@@ -4,10 +4,10 @@
    ========================================================= */
 
 /* =========================================================
-   1. FONT IMPORT
+   1. FONT
+   Plus Jakarta Sans dimuat via <link> di <head> layout
+   (lebih cepat daripada @import yang render-blocking).
    ========================================================= */
-
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap");
 
 /* =========================================================
    2. TAILWIND CSS V4
@@ -24,6 +24,7 @@
 @import "./foundations/effects.css";
 @import "./foundations/backgrounds.css";
 @import "./foundations/layout.css";
+@import "./foundations/patterns.css";
 
 /* =========================================================
    4. TAILWIND SOURCE DETECTION
@@ -68,7 +69,7 @@ body {
 
 ::selection {
     color: #ffffff;
-    background: #4c916b;
+    background: var(--ui-brand-600);
 }
 
 /* =========================================================

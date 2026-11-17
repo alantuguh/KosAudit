@@ -12,6 +12,11 @@
 
    ========================================================= */
 
+import { initGlassTables } from "./table.js";
+import { initGlassModals } from "./modal.js";
+import { initUiBehaviours } from "./ui.js";
+import { initSidebar } from "./sidebar.js";
+
 (() => {
     "use strict";
 
@@ -175,5 +180,47 @@
         }),
     });
 
-    console.info("[KosAudit] Theme Engine initialized.");
 })();
+
+/* =========================================================
+   KOMPONEN
+   Modul Vite bersifat deferred, DOM sudah siap saat ini.
+   ========================================================= */
+
+initGlassTables();
+initGlassModals();
+initUiBehaviours();
+initSidebar();
+
+/* Form ber-atribut data-submit-once: cegah submit ganda + tampilkan spinner.
+   Hanya aktif bila validasi HTML5 lolos (event submit tidak terpicu jika gagal). */
+document.addEventListener("submit", (event) => {
+    const form = event.target;
+
+    if (!form.matches("form[data-submit-once]")) {
+        return;
+    }
+
+    if (form.dataset.submitting) {
+        event.preventDefault();
+        return;
+    }
+
+    form.dataset.submitting = "true";
+
+    const button = event.submitter || form.querySelector('[type="submit"]');
+
+    if (button) {
+        button.setAttribute("aria-busy", "true");
+
+        const spinner = document.createElement("span");
+        spinner.className = "ui-btn-spinner";
+        spinner.setAttribute("aria-hidden", "true");
+        button.prepend(spinner);
+
+        // Dinonaktifkan setelah event selesai agar nilai tombol tetap terkirim.
+        setTimeout(() => {
+            button.disabled = true;
+        });
+    }
+});

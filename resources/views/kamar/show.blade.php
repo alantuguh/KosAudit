@@ -1,132 +1,137 @@
-@extends('layouts.app')
+@extends('layouts.glass')
 
-@section('title', 'Detail Kamar ' . $kamar['nomor'])
+@section('title', 'Kamar ' . $kamar['nomor'])
 
 @section('content')
-<div class="flex flex-col w-full space-y-space-xl">
-    {{-- Breadcrumb & Header --}}
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
-        <div class="space-y-1">
-            <nav class="flex items-center gap-2 font-label-sm text-label-sm text-outline">
-                <a href="{{ route('kamar.index') }}" class="hover:text-primary transition-colors">Data Kamar</a>
-                <span class="material-symbols-outlined text-[14px]">chevron_right</span>
-                <span class="text-primary font-semibold">Kamar {{ $kamar['nomor'] }}</span>
-            </nav>
-            <div class="flex items-center gap-space-sm">
-                <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Detail Kamar {{ $kamar['nomor'] }} • {{ $kamar['tipe'] }}</h1>
-                <x-badge :status="$kamar['status']" />
+<x-glass-page-header
+    :title="'Kamar ' . $kamar['nomor']"
+    :description="'Lantai ' . $kamar['lantai'] . ' • Tipe ' . $kamar['tipe'] . ' • ' . $kamar['ukuran']">
+    <x-slot:breadcrumb>
+        <a href="{{ route('kamar.index') }}">Data Kamar</a>
+        <span class="material-symbols-outlined" aria-hidden="true">chevron_right</span>
+        <span aria-current="page">Kamar {{ $kamar['nomor'] }}</span>
+    </x-slot:breadcrumb>
+
+    <x-slot:actions>
+        <x-glass-button :href="route('inspeksi.komparasi')" variant="secondary" :block="false">
+            Komparasi Terakhir
+        </x-glass-button>
+
+        <x-glass-button :href="route('inspeksi.create', ['kamar' => $kamar['nomor']])" variant="primary" :block="false">
+            <span class="material-symbols-outlined" aria-hidden="true">add</span>
+            Buat Inspeksi
+        </x-glass-button>
+    </x-slot:actions>
+</x-glass-page-header>
+
+<div class="grid grid-cols-1 items-start gap-6 xl:grid-cols-3">
+
+    {{-- Ringkasan unit --}}
+    <div class="flex flex-col gap-6">
+        <x-glass-card level="subtle" class="space-y-5 p-6">
+            <div class="flex items-start justify-between gap-3">
+                <div class="space-y-1">
+                    <p class="ui-eyebrow">Tarif Sewa</p>
+                    <p class="ui-amount">{{ $kamar['harga'] }}<span class="ui-stat-unit">/ bulan</span></p>
+                </div>
+
+                <x-glass-badge :status="$kamar['status']" />
             </div>
-            <p class="font-body-sm text-body-sm text-outline">
-                Lantai {{ $kamar['lantai'] }} • Ukuran {{ $kamar['ukuran'] }} • Tarif Sewa <strong class="text-on-surface font-mono-numeric">{{ $kamar['harga'] }} / bulan</strong>
-            </p>
-        </div>
-        <div class="flex items-center gap-space-sm">
-            <a href="{{ route('inspeksi.create', ['kamar' => $kamar['nomor']]) }}"
-               class="px-space-md py-2.5 rounded-lg bg-primary-container hover:bg-primary text-on-primary font-label-md text-label-md flex items-center gap-1.5 shadow-sm transition-all">
-                <span class="material-symbols-outlined text-[18px]">assignment_add</span>
-                <span>+ Buat Inspeksi Kamar {{ $kamar['nomor'] }}</span>
+
+            <div class="ui-glass-divider"></div>
+
+            <div class="space-y-3">
+                <h2 class="ui-heading-md">Penghuni &amp; Deposit</h2>
+
+                <dl class="ui-dl">
+                    <div>
+                        <dt>Penghuni</dt>
+                        <dd>{{ $kamar['penghuni'] }}</dd>
+                    </div>
+                    <div>
+                        <dt>Periode kontrak</dt>
+                        <dd class="ui-num">{{ $kamar['periode'] }}</dd>
+                    </div>
+                    <div>
+                        <dt>Deposit ditahan</dt>
+                        <dd class="ui-num">{{ $kamar['deposit'] }}</dd>
+                    </div>
+                </dl>
+            </div>
+
+            <a href="{{ route('deposit.perhitungan') }}" class="ui-link inline-flex items-center gap-1 text-sm">
+                Buka kalkulasi deposit
+                <span class="material-symbols-outlined text-[16px]" aria-hidden="true">arrow_forward</span>
             </a>
-            <a href="{{ route('inspeksi.komparasi') }}"
-               class="px-space-md py-2.5 rounded-lg bg-surface-container-lowest hover:bg-surface-container-low text-on-surface font-label-md text-label-md flex items-center gap-1.5 shadow-sm transition-all">
-                <span class="material-symbols-outlined text-[18px] text-primary">compare</span>
-                <span>Lihat Komparasi Terakhir</span>
-            </a>
-        </div>
+        </x-glass-card>
+
+        <x-glass-card level="subtle" class="space-y-4 p-6">
+            <div class="flex items-center justify-between gap-3">
+                <h2 class="ui-heading-md">Item Kondisi</h2>
+                <x-glass-badge tone="neutral">{{ count($kamar['fasilitas']) }} item</x-glass-badge>
+            </div>
+
+            @if ($kamar['fasilitas'])
+            <ul class="flex flex-wrap gap-2" aria-label="Daftar item kondisi">
+                @foreach ($kamar['fasilitas'] as $item)
+                <li><x-glass-badge tone="brand">{{ $item }}</x-glass-badge></li>
+                @endforeach
+            </ul>
+            <p class="ui-caption">Menjadi daftar periksa saat inspeksi check-in dan check-out.</p>
+            @else
+            <p class="ui-body-sm">Belum ada item kondisi. Tambahkan item agar kamar dapat diinspeksi.</p>
+            @endif
+        </x-glass-card>
     </div>
 
-    {{-- Info Grid: Penghuni Saat Ini & Daftar Inventaris Standar --}}
-    <div class="grid grid-cols-1 lg:grid-cols-12 gap-space-lg">
-        <div class="lg:col-span-5 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm space-y-space-md">
-            <div class="flex items-center justify-between">
-                <h2 class="font-headline-sm text-headline-sm text-on-surface">Informasi Penghuni &amp; Deposit</h2>
-                <span class="material-symbols-outlined text-primary">person_check</span>
-            </div>
-            <div class="p-space-md rounded-xl bg-surface-container-low space-y-2">
-                <div class="flex justify-between text-body-sm">
-                    <span class="text-outline">Nama Penghuni</span>
-                    <span class="font-semibold text-on-surface">{{ $kamar['penghuni'] }}</span>
-                </div>
-                <div class="flex justify-between text-body-sm">
-                    <span class="text-outline">Periode Kontrak</span>
-                    <span class="font-mono-numeric text-on-surface">{{ $kamar['periode'] }}</span>
-                </div>
-                <div class="flex justify-between text-body-sm">
-                    <span class="text-outline">Deposit Ditahan</span>
-                    <span class="font-mono-numeric font-bold text-primary">{{ $kamar['deposit'] }}</span>
-                </div>
-                <div class="flex justify-between text-body-sm">
-                    <span class="text-outline">Fasilitas Kamar</span>
-                    <span class="text-on-surface font-medium">{{ implode(', ', $kamar['fasilitas']) }}</span>
-                </div>
-            </div>
-            <div class="flex items-center justify-between pt-1">
-                <a href="{{ route('deposit.perhitungan') }}" class="text-primary font-label-md hover:underline flex items-center gap-1">
-                    <span>Buka Kalkulasi Pengembalian Deposit</span>
-                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
-                </a>
-            </div>
-        </div>
+    {{-- Riwayat inspeksi --}}
+    <div class="min-w-0 xl:col-span-2">
+        @if (count($riwayatInspeksi))
+        <x-glass-table
+            id="riwayat-kamar-table"
+            title="Riwayat Inspeksi"
+            :stack="true"
+            :per-page="6"
+            :per-page-options="[6]"
+            search-placeholder="Cari riwayat..."
+            info-label="inspeksi">
+            <x-slot:head>
+                <tr>
+                    <th scope="col">Inspeksi</th>
+                    <th scope="col">Tanggal</th>
+                    <th scope="col">Jenis</th>
+                    <th scope="col">Ringkasan</th>
+                    <th scope="col" class="ui-cell-end"><span class="sr-only">Aksi</span></th>
+                </tr>
+            </x-slot:head>
 
-        <div class="lg:col-span-7 bg-surface-container-lowest p-space-lg rounded-xl shadow-sm space-y-space-md">
-            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-space-sm">
-                <div>
-                    <h2 class="font-headline-sm text-headline-sm text-on-surface">Riwayat Inspeksi Kamar {{ $kamar['nomor'] }}</h2>
-                    <p class="font-body-sm text-body-sm text-outline">Log pemeriksaan fisik Check-in dan Check-out pada URI dinamis <code>/kamar/{{ $kamar['nomor'] }}</code></p>
-                </div>
-                <div class="relative w-full sm:w-56">
-                    <span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-outline text-[18px]">search</span>
-                    <input id="search-riwayat-kamar" type="text" placeholder="Cari riwayat..."
-                           class="w-full h-9 pl-9 pr-3 rounded-lg bg-surface-container-low text-body-sm focus:outline-none focus:ring-1 focus:ring-primary"/>
-                </div>
-            </div>
+            @foreach ($riwayatInspeksi as $log)
+            <tr>
+                <td>
+                    <p class="ui-num font-semibold">{{ $log['kode'] }}</p>
+                    <p class="ui-caption">{{ $log['penghuni'] }}</p>
+                </td>
+                <td data-label="Tanggal" class="ui-num">{{ $log['tanggal'] }}</td>
+                <td data-label="Jenis"><x-glass-badge :status="$log['jenis']" /></td>
+                <td data-label="Ringkasan">{{ $log['ringkasan'] }}</td>
+                <td class="ui-cell-end">
+                    <x-glass-button :href="route('inspeksi.komparasi')" variant="secondary" size="sm" :block="false">Detail</x-glass-button>
+                </td>
+            </tr>
+            @endforeach
+        </x-glass-table>
+        @else
+        <x-glass-empty-state icon="history" title="Belum ada riwayat inspeksi">
+            Inspeksi check-in dan check-out untuk Kamar {{ $kamar['nomor'] }} akan tercatat di sini beserta ringkasan kondisinya.
 
-            <div class="overflow-x-auto">
-                <table id="riwayat-kamar-table" class="w-full text-left border-collapse">
-                    <thead>
-                        <tr class="bg-surface-container-low text-outline font-label-sm text-label-sm uppercase tracking-wider">
-                            <th class="py-3 px-space-md font-semibold">ID Audit</th>
-                            <th class="py-3 px-space-md font-semibold">Tanggal</th>
-                            <th class="py-3 px-space-md font-semibold">Jenis</th>
-                            <th class="py-3 px-space-md font-semibold">Penghuni</th>
-                            <th class="py-3 px-space-md font-semibold">Ringkasan Kondisi</th>
-                            <th class="py-3 px-space-md text-right font-semibold">Aksi</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-surface-container text-body-sm">
-                        @foreach ($riwayatInspeksi as $log)
-                        <tr class="hover:bg-surface-container-low/50 transition-colors">
-                            <td class="py-3.5 px-space-md font-mono-numeric font-semibold text-primary">{{ $log['kode'] }}</td>
-                            <td class="py-3.5 px-space-md font-mono-numeric text-outline">{{ $log['tanggal'] }}</td>
-                            <td class="py-3.5 px-space-md">
-                                <x-badge :status="$log['jenis']" />
-                            </td>
-                            <td class="py-3.5 px-space-md font-medium text-on-surface">{{ $log['penghuni'] }}</td>
-                            <td class="py-3.5 px-space-md text-on-surface-variant">{{ $log['ringkasan'] }}</td>
-                            <td class="py-3.5 px-space-md text-right">
-                                <a href="{{ route('inspeksi.komparasi') }}" class="px-3 py-1.5 rounded-lg bg-surface-container-low hover:bg-surface-container text-on-surface font-label-sm">
-                                    Detail
-                                </a>
-                            </td>
-                        </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-            <div id="pagination-riwayat-kamar" class="pt-2"></div>
-        </div>
+            <x-slot:actions>
+                <x-glass-button :href="route('inspeksi.create', ['kamar' => $kamar['nomor']])" variant="primary" :block="false">
+                    <span class="material-symbols-outlined" aria-hidden="true">add</span>
+                    Buat Inspeksi Pertama
+                </x-glass-button>
+            </x-slot:actions>
+        </x-glass-empty-state>
+        @endif
     </div>
 </div>
 @endsection
-
-@push('scripts')
-<script>
-document.addEventListener('DOMContentLoaded', function() {
-    new TablePlus('#riwayat-kamar-table', {
-        perPage: 5,
-        perPageOptions: [5, 10],
-        searchInput: '#search-riwayat-kamar',
-        paginationContainer: '#pagination-riwayat-kamar'
-    });
-});
-</script>
-@endpush

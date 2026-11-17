@@ -66,7 +66,7 @@
 
                         <x-glass-checkbox name="remember" value="1" label="Ingat saya" />
 
-                        <x-glass-button type="submit" variant="secondary">
+                        <x-glass-button type="submit" variant="primary">
                             Masuk ke Akun
                         </x-glass-button>
                     </form>

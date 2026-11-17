@@ -13,15 +13,20 @@
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0">
 
-    {{-- Terapkan tema lebih awal agar tidak berkedip --}}
+    {{-- Terapkan tema & status sidebar lebih awal agar tidak berkedip --}}
     <script>
         (function() {
+            var root = document.documentElement;
             try {
                 var p = localStorage.getItem("kosaudit-theme");
                 var t = p === "light" || p === "dark" ?
                     p :
                     (matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light");
-                document.documentElement.setAttribute("data-theme", t);
+                root.setAttribute("data-theme", t);
+
+                if (localStorage.getItem("kosaudit-sidebar") === "collapsed") {
+                    root.setAttribute("data-sidebar-collapsed", "");
+                }
             } catch (e) {}
         })();
     </script>
@@ -54,26 +59,7 @@
         </div>
     </div>
 
-    <script>
-        (() => {
-            const root = document.documentElement;
-
-            document.addEventListener("click", (event) => {
-                if (event.target.closest("[data-sidebar-toggle]")) {
-                    root.toggleAttribute("data-sidebar-open");
-                } else if (event.target.closest("[data-sidebar-close]")) {
-                    root.removeAttribute("data-sidebar-open");
-                }
-            });
-
-            document.addEventListener("keydown", (event) => {
-                if (event.key === "Escape") {
-                    root.removeAttribute("data-sidebar-open");
-                }
-            });
-        })();
-    </script>
-
+    {{-- Perilaku sidebar ada di resources/js/sidebar.js --}}
     @stack('scripts')
 </body>
 

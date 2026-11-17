@@ -96,9 +96,10 @@ body {
    5. THEME TRANSITION
    ========================================================= */
 
+/* .ui-glass sengaja tidak disertakan: transition-nya sudah diatur
+   di effects.css (termasuk box-shadow & transform untuk interactive). */
 body,
-.ui-app-background,
-.ui-glass {
+.ui-app-background {
     transition:
         background-color var(--duration-normal) var(--ease-standard),
         color var(--duration-normal) var(--ease-standard),
@@ -125,8 +126,7 @@ body,
 
 @media (prefers-reduced-motion: reduce) {
     body,
-    .ui-app-background,
-    .ui-glass {
+    .ui-app-background {
         transition: none;
     }
 }

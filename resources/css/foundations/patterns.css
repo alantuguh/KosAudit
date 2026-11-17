@@ -1,0 +1,692 @@
+/* =========================================================
+   KOSAUDIT DESIGN SYSTEM
+   FOUNDATION: PATTERNS
+   Pola tingkat halaman: breadcrumb, description list, nominal,
+   kartu ber-tone, segmented, upload, foto bukti, stepper, meter,
+   action bar, toast, dan shell mobile.
+   ========================================================= */
+
+/* =========================================================
+   1. BREADCRUMB
+   ========================================================= */
+
+.ui-breadcrumb {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.25rem;
+    color: var(--ui-text-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.ui-breadcrumb a {
+    color: var(--ui-text-secondary);
+    text-decoration: none;
+}
+
+.ui-breadcrumb a:hover {
+    color: var(--ui-text);
+    text-decoration: underline;
+}
+
+.ui-breadcrumb .material-symbols-outlined {
+    font-size: 0.875rem;
+}
+
+.ui-breadcrumb [aria-current="page"] {
+    color: var(--ui-text);
+}
+
+/* =========================================================
+   2. DESCRIPTION LIST (label : nilai)
+   ========================================================= */
+
+.ui-dl {
+    display: grid;
+    margin: 0;
+}
+
+.ui-dl > div {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.25rem var(--space-4);
+    padding: 0.625rem 0;
+    border-top: 1px solid var(--ui-border);
+}
+
+.ui-dl > div:first-child {
+    padding-top: 0;
+    border-top: 0;
+}
+
+.ui-dl > div:last-child {
+    padding-bottom: 0;
+}
+
+.ui-dl dt {
+    color: var(--ui-text-secondary);
+    font-size: 0.8125rem;
+}
+
+.ui-dl dd {
+    margin: 0;
+    color: var(--ui-text);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    text-align: right;
+}
+
+/* =========================================================
+   2b. LIST DI DALAM KARTU (baris dipisah garis, rata tepi kartu)
+   Pakai pada kartu ber-padding 0: <x-glass-card class="p-0">
+   ========================================================= */
+
+.ui-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ui-list > li {
+    padding: var(--space-4) var(--space-6);
+    border-top: 1px solid var(--ui-border);
+}
+
+/* =========================================================
+   3. ANGKA / NOMINAL
+   ========================================================= */
+
+.ui-num {
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+}
+
+.ui-amount {
+    color: var(--ui-text);
+    font-size: clamp(1.75rem, 4vw, 2.25rem);
+    font-weight: 800;
+    letter-spacing: -0.03em;
+    line-height: 1.15;
+    font-variant-numeric: tabular-nums;
+}
+
+.ui-text-danger {
+    color: var(--ui-danger);
+}
+
+.ui-text-success {
+    color: var(--ui-success);
+}
+
+/* Blok ringkasan nominal utama */
+.ui-highlight {
+    padding: var(--space-5);
+    background: color-mix(in srgb, var(--ui-brand-500) 12%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ui-brand-500) 35%, transparent);
+    border-radius: var(--ui-radius-control);
+}
+
+/* =========================================================
+   4. FLAG & CALLOUT (permukaan ber-tone)
+   ========================================================= */
+
+.ui-glass.ui-flag {
+    border-color: color-mix(in srgb, var(--tone) 45%, transparent);
+    background: color-mix(in srgb, var(--tone) 7%, var(--glass-background));
+}
+
+.ui-callout {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    padding: var(--space-3) var(--space-4);
+
+    color: var(--ui-text);
+    font-size: 0.8125rem;
+    line-height: 1.55;
+
+    background: color-mix(in srgb, var(--tone, var(--ui-info)) 10%, transparent);
+    border: 1px solid color-mix(in srgb, var(--tone, var(--ui-info)) 30%, transparent);
+    border-radius: var(--ui-radius-control);
+}
+
+.ui-callout > .material-symbols-outlined {
+    flex-shrink: 0;
+    font-size: 1.25rem;
+    color: color-mix(in srgb, var(--tone, var(--ui-info)) 80%, var(--ui-text));
+}
+
+.ui-callout p {
+    color: inherit;
+}
+
+/* =========================================================
+   5. SEGMENTED (pilihan radio bergaya tab)
+   ========================================================= */
+
+.ui-segment {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: 0.25rem;
+    max-width: 100%;
+    margin: 0;
+    padding: 0.25rem;
+
+    background: color-mix(in srgb, var(--ui-text) 5%, transparent);
+    border: 1px solid var(--ui-border);
+    border-radius: var(--ui-radius-control);
+}
+
+.ui-segment-item {
+    position: relative;
+    display: inline-flex;
+    cursor: pointer;
+}
+
+.ui-segment-item input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.ui-segment-option {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+
+    min-height: 2.25rem;
+    padding: 0.375rem 0.875rem;
+
+    color: var(--ui-text-secondary);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    white-space: nowrap;
+
+    border: 1px solid transparent;
+    border-radius: calc(var(--ui-radius-control) - 0.125rem);
+
+    transition:
+        background var(--duration-fast) var(--ease-standard),
+        color var(--duration-fast) var(--ease-standard),
+        border-color var(--duration-fast) var(--ease-standard);
+}
+
+.ui-segment-option .material-symbols-outlined {
+    font-size: 1.125rem;
+}
+
+.ui-segment-item:hover .ui-segment-option {
+    color: var(--ui-text);
+    background: color-mix(in srgb, var(--ui-text) 6%, transparent);
+}
+
+/* Terpilih (default): gradien brand */
+.ui-segment-item input:checked + .ui-segment-option {
+    color: #ffffff;
+    background: var(--ui-brand-gradient);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+/* Terpilih ber-tone, mis. kondisi Baik / Lecet / Rusak */
+.ui-segment-item[class*="ui-tone-"] input:checked + .ui-segment-option {
+    color: color-mix(in srgb, var(--tone) 80%, var(--ui-text));
+    background: color-mix(in srgb, var(--tone) 18%, transparent);
+    border-color: color-mix(in srgb, var(--tone) 50%, transparent);
+    box-shadow: none;
+}
+
+.ui-segment-item input:focus-visible + .ui-segment-option {
+    outline: 2px solid var(--ui-input-focus);
+    outline-offset: 2px;
+}
+
+/* =========================================================
+   6. TEXTAREA & UPLOAD
+   ========================================================= */
+
+textarea.ui-glass-input {
+    min-height: 6rem;
+    line-height: 1.5;
+    resize: vertical;
+}
+
+.ui-upload {
+    position: relative;
+    cursor: pointer;
+}
+
+.ui-upload input[type="file"] {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.ui-upload:focus-within {
+    outline: 2px solid var(--ui-input-focus);
+    outline-offset: 2px;
+}
+
+.ui-upload-name {
+    max-width: 12rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   7. FOTO BUKTI (placeholder netral)
+   ========================================================= */
+
+.ui-photo {
+    position: relative;
+    display: grid;
+    place-items: center;
+    aspect-ratio: 4 / 3;
+    overflow: hidden;
+
+    color: var(--ui-text-muted);
+    background:
+        repeating-linear-gradient(
+            135deg,
+            color-mix(in srgb, var(--ui-text) 4%, transparent) 0 10px,
+            transparent 10px 20px
+        ),
+        color-mix(in srgb, var(--ui-text) 5%, transparent);
+    border: 1px dashed var(--ui-border-strong);
+    border-radius: var(--ui-radius-control);
+}
+
+.ui-photo > .material-symbols-outlined {
+    font-size: 1.75rem;
+}
+
+.ui-photo-tag {
+    position: absolute;
+    top: 0.375rem;
+    left: 0.375rem;
+}
+
+/* =========================================================
+   8. STEPPER
+   ========================================================= */
+
+.ui-steps {
+    display: grid;
+    grid-auto-columns: minmax(0, 1fr);
+    grid-auto-flow: column;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+.ui-step {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.375rem;
+
+    color: var(--ui-text-muted);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-align: center;
+}
+
+/* Garis penghubung ke langkah sebelumnya */
+.ui-step + .ui-step::before {
+    content: "";
+    position: absolute;
+    top: 0.875rem;
+    right: 50%;
+    z-index: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--ui-border-strong);
+}
+
+.ui-step[data-state="done"]::before,
+.ui-step[data-state="current"]::before {
+    background: var(--ui-brand-500);
+}
+
+.ui-step-dot {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    place-items: center;
+
+    width: 1.75rem;
+    height: 1.75rem;
+
+    color: var(--ui-text-muted);
+    background: var(--ui-surface);
+    border: 2px solid var(--ui-border-strong);
+    border-radius: 50%;
+}
+
+.ui-step-dot .material-symbols-outlined {
+    font-size: 1rem;
+}
+
+.ui-step[data-state="done"] {
+    color: var(--ui-text-secondary);
+}
+
+.ui-step[data-state="done"] .ui-step-dot {
+    color: #ffffff;
+    background: var(--ui-brand-600);
+    border-color: var(--ui-brand-600);
+}
+
+.ui-step[data-state="current"] {
+    color: var(--ui-text);
+}
+
+.ui-step[data-state="current"] .ui-step-dot {
+    color: var(--ui-brand-500);
+    border-color: var(--ui-brand-500);
+    box-shadow: 0 0 0 4px color-mix(in srgb, var(--ui-brand-500) 22%, transparent);
+}
+
+/* =========================================================
+   9. METER (proporsi)
+   ========================================================= */
+
+.ui-meter {
+    display: flex;
+    height: 0.5rem;
+    overflow: hidden;
+    background: color-mix(in srgb, var(--ui-text) 10%, transparent);
+    border-radius: 9999px;
+}
+
+.ui-meter > span {
+    height: 100%;
+    background: var(--tone, var(--ui-brand-500));
+}
+
+/* =========================================================
+   10. ACTION BAR (sticky bawah) & STICKY PANEL
+   ========================================================= */
+
+.ui-action-bar {
+    position: sticky;
+    bottom: var(--space-4);
+    z-index: 20;
+
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+}
+
+/* Di layout mobile, action bar berhenti di atas tab bar */
+.ui-has-tabbar .ui-action-bar {
+    bottom: calc(var(--ui-tabbar-offset) + var(--space-2));
+}
+
+@media (min-width: 1024px) {
+    .ui-sticky {
+        position: sticky;
+        /* di bawah header kartu melayang */
+        top: calc(var(--ui-shell-gap) + var(--ui-header-height) + var(--space-6));
+    }
+}
+
+/* =========================================================
+   11. TOAST
+   ========================================================= */
+
+.ui-toast-region {
+    position: fixed;
+    right: var(--space-4);
+    bottom: calc(var(--space-4) + env(safe-area-inset-bottom, 0px));
+    left: var(--space-4);
+    z-index: 60;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-2);
+    pointer-events: none;
+}
+
+.ui-has-tabbar .ui-toast-region {
+    bottom: calc(var(--ui-tabbar-offset) + var(--space-2));
+}
+
+.ui-toast {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--space-3);
+    width: min(100%, 26rem);
+    padding: var(--space-3) var(--space-4);
+
+    color: var(--ui-text);
+    font-size: 0.8125rem;
+    line-height: 1.5;
+
+    background: color-mix(in srgb, var(--ui-surface-elevated) 96%, transparent);
+    border: 1px solid color-mix(in srgb, var(--tone, var(--ui-info)) 45%, var(--ui-border));
+    border-radius: var(--ui-radius-control);
+    box-shadow: var(--ui-shadow-lg);
+    pointer-events: auto;
+
+    animation: ui-modal-in var(--duration-normal) var(--ease-standard);
+}
+
+.ui-toast > .material-symbols-outlined {
+    flex-shrink: 0;
+    font-size: 1.25rem;
+    color: var(--tone, var(--ui-info));
+}
+
+.ui-toast p {
+    color: inherit;
+    line-height: 1.5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .ui-toast {
+        animation: none;
+    }
+}
+
+/* =========================================================
+   11b. TABEL BERTUMPUK (mobile)
+   <x-glass-table :stack="true">: di layar < 640px tiap baris
+   menjadi kartu. Sel butuh data-label; sel pertama jadi judul kartu.
+   ========================================================= */
+
+@media (max-width: 639px) {
+    .ui-table-stack thead {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .ui-table-stack,
+    .ui-table-stack tbody,
+    .ui-table-stack tr,
+    .ui-table-stack td {
+        display: block;
+        width: 100%;
+    }
+
+    .ui-table-stack tr[hidden] {
+        display: none;
+    }
+
+    .ui-table-stack tbody tr {
+        padding: var(--space-4) var(--space-5);
+        border-top: 1px solid var(--ui-border);
+    }
+
+    .ui-table-stack tbody tr:first-child {
+        border-top: 0;
+    }
+
+    .ui-table.ui-table-stack td,
+    .ui-table.ui-table-stack td:first-child,
+    .ui-table.ui-table-stack td:last-child {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-4);
+        padding: 0.25rem 0;
+        text-align: right;
+        border: 0;
+    }
+
+    .ui-table-stack td[data-label]::before {
+        content: attr(data-label);
+        flex-shrink: 0;
+        color: var(--ui-text-muted);
+        font-size: 0.75rem;
+        font-weight: 600;
+        text-align: left;
+    }
+
+    /* Sel pertama = judul kartu */
+    .ui-table.ui-table-stack td:first-child {
+        display: block;
+        padding-bottom: var(--space-2);
+        text-align: left;
+    }
+
+    /* Sel aksi: tombol selebar kartu */
+    .ui-table.ui-table-stack td.ui-cell-end {
+        padding-top: var(--space-3);
+    }
+
+    .ui-table-stack td.ui-cell-end > .ui-btn {
+        width: 100%;
+    }
+
+    .ui-table-stack .ui-table-empty td {
+        display: block;
+        text-align: center;
+    }
+}
+
+/* =========================================================
+   12. MOBILE SHELL (portal penghuni)
+   ========================================================= */
+
+/*
+ * Header & tab bar = kartu premium glass melayang (sama dengan shell desktop).
+ * --ui-tabbar-offset: jarak dari bawah layar ke tepi atas tab bar,
+ * dipakai toast & action bar agar tidak tertutup.
+ */
+.ui-has-tabbar {
+    --ui-tabbar-height: 4rem;
+    --ui-tabbar-offset: calc(
+        var(--ui-tabbar-height) + var(--ui-shell-gap) + env(safe-area-inset-bottom, 0px)
+    );
+}
+
+.ui-mobile-shell {
+    position: relative;
+    width: 100%;
+    max-width: 30rem;
+    min-height: 100vh;
+    margin-inline: auto;
+}
+
+.ui-mobile-header {
+    position: sticky;
+    top: calc(var(--ui-shell-gap) + env(safe-area-inset-top, 0px));
+    z-index: 30;
+    margin: calc(var(--ui-shell-gap) + env(safe-area-inset-top, 0px)) var(--ui-shell-gap) 0;
+
+    /* blur dinaikkan: konten lewat di belakang header sticky */
+    --glass-blur: 18px;
+
+    /* dropdown menu akun tidak boleh terpotong */
+    overflow: visible;
+}
+
+.ui-mobile-header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+    min-height: 3.5rem;
+    padding: 0 0.5rem 0 0.75rem;
+}
+
+.ui-mobile-content {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    padding: var(--space-4) var(--space-4) calc(var(--ui-tabbar-offset) + var(--space-6));
+}
+
+.ui-tabbar {
+    position: fixed;
+    bottom: calc(var(--ui-shell-gap) + env(safe-area-inset-bottom, 0px));
+    left: 50%;
+    z-index: 40;
+
+    width: calc(100% - var(--ui-shell-gap) * 2);
+    max-width: calc(30rem - var(--ui-shell-gap) * 2);
+
+    transform: translateX(-50%);
+    --glass-blur: 18px;
+}
+
+.ui-tabbar-inner {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    min-height: var(--ui-tabbar-height);
+}
+
+.ui-tabbar-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 0.125rem;
+
+    color: var(--ui-text-secondary);
+    font-size: 0.6875rem;
+    font-weight: 600;
+    text-decoration: none;
+
+    transition: color var(--duration-fast) var(--ease-standard);
+}
+
+.ui-tabbar-item .material-symbols-outlined {
+    display: grid;
+    place-items: center;
+    width: 3rem;
+    height: 1.75rem;
+    font-size: 1.375rem;
+    border-radius: 9999px;
+    transition: background var(--duration-fast) var(--ease-standard);
+}
+
+.ui-tabbar-item:hover,
+.ui-tabbar-item[aria-current="page"] {
+    color: var(--ui-text);
+}
+
+.ui-tabbar-item[aria-current="page"] .material-symbols-outlined {
+    color: #ffffff;
+    background: var(--ui-brand-gradient);
+}
+
+.ui-tabbar-item:focus-visible {
+    outline: 2px solid var(--ui-input-focus);
+    outline-offset: -4px;
+}

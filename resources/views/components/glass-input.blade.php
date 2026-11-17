@@ -9,6 +9,7 @@
     $name = $attributes->get('name');
     $id = $attributes->get('id', $name);
     $message = $error ?? ($name ? $errors->first($name) : null);
+    $errorId = $id ? $id . '-error' : null;
 @endphp
 
 <div class="ui-field">
@@ -25,7 +26,7 @@
 
         <input
             @disabled($disabled)
-            @if ($message) aria-invalid="true" @endif
+            @if ($message) aria-invalid="true" @if ($errorId) aria-describedby="{{ $errorId }}" @endif @endif
             {{ $attributes->class([
                 'ui-glass-input',
                 'ui-glass-input-has-icon' => $icon,
@@ -35,6 +36,6 @@
     </div>
 
     @if ($message)
-        <p class="ui-field-error">{{ $message }}</p>
+        <p @if ($errorId) id="{{ $errorId }}" @endif class="ui-field-error">{{ $message }}</p>
     @endif
 </div>

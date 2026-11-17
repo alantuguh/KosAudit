@@ -1,79 +1,90 @@
-@extends('layouts.app')
+@extends('layouts.glass')
 
-@section('title', 'Perbandingan Kondisi Check-in vs Check-out')
+@section('title', 'Komparasi Kondisi')
 
 @section('content')
-<div class="mb-space-md rounded-xl border border-secondary/20 bg-secondary-fixed/50 p-space-md text-secondary font-label-md">
-    Preview: hasil inspeksi dan perbandingan pada halaman ini adalah contoh, bukan data yang tersimpan di backend.
-</div>
 @php
+// Contoh hasil komparasi (backend inspeksi belum tersedia). Biaya dalam rupiah.
 $komparasiItems = [
-    ['no'=>1,'icon'=>'mode_fan','nama'=>'AC Split & Remote Control','kat'=>'Elektronik Utama','awal'=>'Baik','akhir'=>'Rusak Berat','cat_in'=>'AC dingin optimal (22°C), remote original berfungsi normal lengkap baterai.','cat_out'=>'Remote AC tidak ditemukan saat serah terima unit. Flap AC berderit.','biaya'=>'Rp 150.000','urgent'=>true],
-    ['no'=>2,'icon'=>'wallpaper','nama'=>'Dinding Kamar & Pengecatan','kat'=>'Struktur & Interior','awal'=>'Baik','akhir'=>'Rusak Berat','cat_in'=>'Cat dinding putih polos baru, permukaan mulus tanpa lubang paku atau perekat.','cat_out'=>'4 titik cat terkelupas dalam akibat tarikan double-tape cermin dan poster.','biaya'=>'Rp 100.000','urgent'=>true],
-    ['no'=>3,'icon'=>'bed','nama'=>'Kasur Springbed & Sprei Pelindung','kat'=>'Furnitur Lembut','awal'=>'Baik','akhir'=>'Lecet Ringan','cat_in'=>'Springbed bersih higienis dengan sprei pelindung terpasang rapat, bebas noda.','cat_out'=>'Ada noda tumpahan minuman teh samar di sudut kanan atas kasur (±12cm).','biaya'=>'Rp 50.000','urgent'=>true],
-    ['no'=>4,'icon'=>'door_sliding','nama'=>'Lemari Pakaian 2 Pintu Geser','kat'=>'Mebel Kayu','awal'=>'Baik','akhir'=>'Baik','cat_in'=>'Pintu geser lancar, kunci cadangan 2 pcs lengkap, rel bersih.','cat_out'=>'Kondisi sangat terawat, bersih, kedua kunci asli diserahkan utuh.','biaya'=>'Rp 0','urgent'=>false],
-    ['no'=>5,'icon'=>'water_drop','nama'=>'Kran Air & Wastafel Kamar Mandi','kat'=>'Sanitari','awal'=>'Baik','akhir'=>'Baik (Wajar)','cat_in'=>'Air mengalir kencang, drat kran kencang, pipa rapat tanpa rembes.','cat_out'=>'Pemakaian wajar 1 tahun (normal wear & tear), keramik wastafel utuh.','biaya'=>'Rp 0','urgent'=>false],
-    ['no'=>6,'icon'=>'grid_view','nama'=>'Lantai Keramik Granit 60x60','kat'=>'Lantai','awal'=>'Baik','akhir'=>'Baik','cat_in'=>'Nat keramik rapi bersih, tidak ada gompal atau retak.','cat_out'=>'Keramik lantai tetap mulus berkilau, bebas retak.','biaya'=>'Rp 0','urgent'=>false],
+    ['icon' => 'mode_fan', 'nama' => 'AC Split & Remote Control', 'kat' => 'Elektronik Utama', 'awal' => 'Baik', 'akhir' => 'Rusak Berat', 'cat_in' => 'AC dingin optimal (22°C), remote original berfungsi normal lengkap baterai.', 'cat_out' => 'Remote AC tidak ditemukan saat serah terima unit. Flap AC berderit.', 'biaya' => 150000],
+    ['icon' => 'wallpaper', 'nama' => 'Dinding Kamar & Pengecatan', 'kat' => 'Struktur & Interior', 'awal' => 'Baik', 'akhir' => 'Rusak Berat', 'cat_in' => 'Cat dinding putih polos baru, permukaan mulus tanpa lubang paku atau perekat.', 'cat_out' => '4 titik cat terkelupas dalam akibat tarikan double-tape cermin dan poster.', 'biaya' => 100000],
+    ['icon' => 'bed', 'nama' => 'Kasur Springbed & Sprei Pelindung', 'kat' => 'Furnitur Lembut', 'awal' => 'Baik', 'akhir' => 'Lecet Ringan', 'cat_in' => 'Springbed bersih higienis dengan sprei pelindung terpasang rapat, bebas noda.', 'cat_out' => 'Ada noda tumpahan minuman teh samar di sudut kanan atas kasur (±12cm).', 'biaya' => 50000],
+    ['icon' => 'door_sliding', 'nama' => 'Lemari Pakaian 2 Pintu Geser', 'kat' => 'Mebel Kayu', 'awal' => 'Baik', 'akhir' => 'Baik', 'cat_in' => 'Pintu geser lancar, kunci cadangan 2 pcs lengkap, rel bersih.', 'cat_out' => 'Kondisi sangat terawat, bersih, kedua kunci asli diserahkan utuh.', 'biaya' => 0],
+    ['icon' => 'water_drop', 'nama' => 'Kran Air & Wastafel Kamar Mandi', 'kat' => 'Sanitari', 'awal' => 'Baik', 'akhir' => 'Baik (Wajar)', 'cat_in' => 'Air mengalir kencang, drat kran kencang, pipa rapat tanpa rembes.', 'cat_out' => 'Pemakaian wajar 1 tahun (normal wear & tear), keramik wastafel utuh.', 'biaya' => 0],
+    ['icon' => 'grid_view', 'nama' => 'Lantai Keramik Granit 60x60', 'kat' => 'Lantai', 'awal' => 'Baik', 'akhir' => 'Baik', 'cat_in' => 'Nat keramik rapi bersih, tidak ada gompal atau retak.', 'cat_out' => 'Keramik lantai tetap mulus berkilau, bebas retak.', 'biaya' => 0],
 ];
+
+$rupiah = fn (int $n) => 'Rp ' . number_format($n, 0, ',', '.');
+$temuan = collect($komparasiItems)->where('biaya', '>', 0);
+$totalBiaya = $temuan->sum('biaya');
 @endphp
 
-<div class="flex flex-col w-full space-y-space-xl">
-    <div class="flex flex-col md:flex-row md:items-center justify-between gap-space-md">
-        <div>
-            <h1 class="font-headline-lg text-headline-lg text-on-surface">Audit Perbandingan Kondisi Kamar 104</h1>
-            <p class="font-body-md text-on-surface-variant mt-0.5">Penghuni: <strong class="text-on-surface">Dinda Kirana</strong> • Periode: 1 Jun 2024 — 24 Mei 2025 (12 Bulan)</p>
-        </div>
-        <div class="flex items-center gap-space-sm">
-            <a href="{{ route('inspeksi.create') }}" class="px-space-md py-2.5 rounded-lg bg-surface-container-low text-on-surface font-label-md flex items-center gap-1.5">
-                <span class="material-symbols-outlined text-[18px]">arrow_back</span> Kembali ke Form Inspeksi
-            </a>
-            <a href="{{ route('deposit.perhitungan') }}" class="px-space-lg py-2.5 rounded-lg bg-primary-container text-on-primary font-label-md shadow-sm flex items-center gap-1.5">
-                <span>Lanjut ke Perhitungan Deposit</span>
-                <span class="material-symbols-outlined text-[18px]">arrow_forward</span>
-            </a>
-        </div>
-    </div>
+<x-glass-alert type="warning" title="Mode pratinjau">
+    Hasil inspeksi dan perbandingan pada halaman ini adalah contoh, bukan data yang tersimpan di backend.
+</x-glass-alert>
 
-    {{-- Side-by-Side Cards --}}
-    <div class="space-y-space-md">
-        @foreach ($komparasiItems as $item)
-        <div class="rounded-2xl {{ $item['urgent'] ? 'bg-error-container/20 border border-error/20' : 'bg-surface-container-lowest' }} p-space-lg shadow-sm space-y-space-md">
-            <div class="flex flex-wrap items-center justify-between gap-space-sm">
-                <div class="flex items-center gap-3">
-                    <div class="w-9 h-9 rounded-lg bg-surface-container-lowest flex items-center justify-center {{ $item['urgent'] ? 'text-error' : 'text-primary' }} shadow-xs">
-                        <span class="material-symbols-outlined text-[20px]">{{ $item['icon'] }}</span>
-                    </div>
-                    <div>
-                        <h3 class="font-headline-sm text-on-surface font-bold">{{ $item['no'] }}. {{ $item['nama'] }}</h3>
-                        <p class="font-label-sm text-outline">{{ $item['kat'] }}</p>
-                    </div>
+<x-glass-page-header
+    eyebrow="Audit Check-in vs Check-out"
+    title="Komparasi Kamar 104"
+    description="Penghuni: Dinda Kirana • Periode 1 Jun 2024 – 24 Mei 2025 (12 bulan)">
+    <x-slot:actions>
+        <x-glass-button :href="route('inspeksi.create')" variant="secondary" :block="false">
+            Form Inspeksi
+        </x-glass-button>
+
+        <x-glass-button :href="route('deposit.perhitungan')" variant="primary" :block="false">
+            Hitung Deposit
+            <span class="material-symbols-outlined" aria-hidden="true">arrow_forward</span>
+        </x-glass-button>
+    </x-slot:actions>
+</x-glass-page-header>
+
+{{-- Ringkasan --}}
+<section aria-label="Ringkasan komparasi" class="grid grid-cols-2 gap-4 lg:grid-cols-3 xl:gap-6">
+    <x-glass-stat-card label="Item Diperiksa" :value="count($komparasiItems)" unit="Item" tone="brand" subtitle="Check-in vs check-out" />
+    <x-glass-stat-card label="Ada Temuan" :value="$temuan->count()" unit="Item" tone="danger" subtitle="Kondisi menurun" />
+    <x-glass-stat-card label="Estimasi Beban" :value="$rupiah($totalBiaya)" tone="warning" subtitle="Diajukan ke deposit" class="col-span-2 lg:col-span-1" />
+</section>
+
+{{-- Kartu perbandingan --}}
+<ol class="flex flex-col gap-4" aria-label="Perbandingan per item">
+    @foreach ($komparasiItems as $i => $item)
+    @php $adaTemuan = $item['biaya'] > 0; @endphp
+    <li>
+        <x-glass-card level="subtle" :class="\Illuminate\Support\Arr::toCssClasses(['space-y-4 p-5 sm:p-6', 'ui-flag ui-tone-danger' => $adaTemuan])">
+            <div class="flex flex-wrap items-start justify-between gap-3">
+                <div class="min-w-0">
+                    <h2 class="text-sm font-semibold">{{ $i + 1 }}. {{ $item['nama'] }}</h2>
+                    <p class="ui-caption">{{ $item['kat'] }}</p>
                 </div>
-                <div class="flex items-center gap-2">
-                    <x-badge :status="$item['akhir']">{{ $item['awal'] }} ➔ {{ $item['akhir'] }}</x-badge>
-                    <span class="px-3 py-1 rounded-full bg-surface-container-lowest font-mono-numeric font-bold {{ $item['urgent'] ? 'text-error' : 'text-tertiary' }}">
-                        Estimasi Beban: {{ $item['biaya'] }}
+
+                <div class="flex flex-wrap items-center gap-2">
+                    <x-glass-badge :status="$item['akhir']">{{ $item['awal'] }} → {{ $item['akhir'] }}</x-glass-badge>
+                    <span @class(['ui-num text-sm font-semibold', 'ui-text-danger' => $adaTemuan, 'ui-text-muted' => ! $adaTemuan])>
+                        {{ $adaTemuan ? $rupiah($item['biaya']) : 'Tanpa biaya' }}
                     </span>
                 </div>
             </div>
 
-            <div class="grid grid-cols-1 lg:grid-cols-2 gap-space-md">
-                <div class="bg-surface-container-lowest p-space-md rounded-xl space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="font-label-sm uppercase text-outline">Kondisi Awal (Check-in • 1 Jun 2024)</span>
-                        <x-badge :status="$item['awal']" />
+            <div class="grid grid-cols-1 gap-3 lg:grid-cols-2">
+                <div class="ui-inset space-y-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="ui-eyebrow">Check-in &bull; 1 Jun 2024</span>
+                        <x-glass-badge :status="$item['awal']" />
                     </div>
-                    <p class="font-body-sm text-on-surface-variant italic">"{{ $item['cat_in'] }}"</p>
+                    <p class="ui-quote">“{{ $item['cat_in'] }}”</p>
                 </div>
-                <div class="bg-surface-container-lowest p-space-md rounded-xl space-y-2">
-                    <div class="flex items-center justify-between">
-                        <span class="font-label-sm uppercase text-outline">Kondisi Akhir (Check-out • 24 Mei 2025)</span>
-                        <x-badge :status="$item['akhir']" />
+
+                <div class="ui-inset space-y-2">
+                    <div class="flex items-center justify-between gap-2">
+                        <span class="ui-eyebrow">Check-out &bull; 24 Mei 2025</span>
+                        <x-glass-badge :status="$item['akhir']" />
                     </div>
-                    <p class="font-body-sm text-on-surface">"{{ $item['cat_out'] }}"</p>
+                    <p class="ui-body-sm text-content">“{{ $item['cat_out'] }}”</p>
                 </div>
             </div>
-        </div>
-        @endforeach
-    </div>
-</div>
+        </x-glass-card>
+    </li>
+    @endforeach
+</ol>
 @endsection
